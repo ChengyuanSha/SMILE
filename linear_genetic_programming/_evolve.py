@@ -56,22 +56,15 @@ class Evolve:
                 loser2dx = rand2[i]
         return win1Idx, win2Idx, loser1dx, loser2dx
 
-    # def displayStatistics(self, g, bestIndividual, isRandomSampling):
-    #     ranSamplingStatus = " RandomSampling" if isRandomSampling else ""
-    #     print("Gen " + str(g) + ": Best indv=" + str(round(bestIndividual.fitness, 2))
-    #             +", CE=" + str(bestIndividual.classificationError)
-    #             + ", Pop avg=" + str(round(self.p.getAverageFitness(), 2))
-    #             + str(ranSamplingStatus))
-
     def displayHeader(self):
-        print("{:^3}|{:^9}|{:^6}|{:^7}|{:^12}".format("Gen", "Best Indv", "CE", "Pop Avg", "Ran Sampling"))
-        print('-' * 3 + ' ' + '-' * 9 + ' ' + '-' * 6 + ' ' + '-' * 7 + ' ' + '-' * 12)
+        print("{:^3}|{:^9}|{:^6}|{:^7}|{:^12}|{:^13}".format("Gen", "Best Indv", "CE", "Pop Avg", "Ran Sampling", "AvgEffProgLen"))
+        print('-' * 3 + ' ' + '-' * 9 + ' ' + '-' * 6 + ' ' + '-' * 7 + ' ' + '-' * 12 + ' ' + '-' * 13)
 
     def displayStatistics(self, g, bestIndividual, isRandomSampling):
         ranSamplingStatus = "True" if isRandomSampling else "False"
-        line_format = '{0:>3d}|{1:>9.2f}|{2:>6d}|{3:>7.2f}|{4:>12s}'
+        line_format = '{0:>3d}|{1:>9.2f}|{2:>6d}|{3:>7.2f}|{4:>12s}|{5:>13.2f}'
         print(line_format.format(g, bestIndividual.fitness, bestIndividual.classificationError,
-              self.p.getAverageFitness(), ranSamplingStatus))
+              self.p.getAverageFitness(), ranSamplingStatus, self.p.getAvgEffProgLen()))
 
     def evolveGeneration(self, pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput, numberOfOperation,
                          numberOfConstant, register, pInsert, maxProgLength, minProgLength,

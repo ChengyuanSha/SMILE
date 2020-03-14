@@ -6,16 +6,18 @@ from sklearn.utils.multiclass import unique_labels
 
 class Program:
     '''
-    A list of sequence
+    A list of instructions
 
     Attributes
     ----------
     seq : python list
         contain a list of Instructions
     fitness: int
-        contain calculated fitness
+        set after evaluate function, contain calculated fitness
     classificationError: int
-        number of misclassified samples
+        set after evaluate function, number of misclassified samples
+    effProgLen: int
+        set after evaluate function, store effective program length
     '''
     OP_ADD = 0
     OP_SUBTRACT = 1
@@ -113,6 +115,7 @@ class Program:
     def predictProbaSigmoid(self, numberOfVariable, register, singleX):
         exonProgram = copy.deepcopy(self)
         exonProgram = exonProgram.eliminateStrcIntron()
+        self.effProgLen = len(exonProgram.seq)
         result = exonProgram.execute(numberOfVariable, register, singleX)
         return self.sigmoid(result)
 
