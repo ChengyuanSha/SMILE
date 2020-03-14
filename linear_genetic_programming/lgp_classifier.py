@@ -36,6 +36,10 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     evolutionStrategy: "population" or "steady state"
         population: traditional genetic algorithm
 
+    constInitRange: initiation of the constant set. tuple (start, stop, step)
+        [start, stop)
+
+
     '''
 
     def __init__(self,
@@ -59,8 +63,9 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                  fitnessThreshold = 1.0,
                  populationSize = 1000,
                  showGenerationStat = True,
-                 randomSampling = True,
-                 evolutionStrategy = "steady state"):
+                 isRandomSampling = True,
+                 evolutionStrategy = "steady state",
+                 constInitRange = (1, 11, 1) ):
         self.numberOfInput = numberOfInput
         self.numberOfOperation = numberOfOperation
         self.numberOfVariable = numberOfVariable
@@ -81,8 +86,9 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.fitnessThreshold = fitnessThreshold
         self.populationSize = populationSize
         self.showGenerationStat = showGenerationStat
-        self.randomSampling = randomSampling
+        self.isRandomSampling = isRandomSampling
         self.evolutionStrategy = evolutionStrategy
+        self.constInitRange = constInitRange
 
     #   register numberOfInput + numberOfVariable + numberOfConstant
     def __generateRegister(self):
@@ -93,7 +99,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         # initialize constant
         j = self.numberOfVariable + self.numberOfInput
         while j < register_length:
-            register[j] = np.around(np.random.choice(np.arange(-1, 1.1, 0.1)), 2) #j - self.numberOfVariable + self.numberOfInput + 1
+            register[j] = np.around(np.random.choice(np.arange(self.constInitRange[0],
+                                self.constInitRange[1], self.constInitRange[2])), 2) #j - self.numberOfVariable + self.numberOfInput + 1
             j += 1
         self.register_ = register
 
@@ -132,7 +139,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                                       self.numberOfVariable, self.numberOfInput, self.numberOfOperation,
                                       self.numberOfConstant, self.register_, self.pInsert, self.maxProgLength,
                                       self.minProgLength, X, y, self.fitnessThreshold, self.showGenerationStat,
-                                      self.randomSampling, self.evolutionStrategy)
+                                      self.isRandomSampling, self.evolutionStrategy)
         self.bestProgStr_ = bestProg.toString(self.numberOfVariable, self.numberOfInput, self.register_)
         effProg = copy.deepcopy(bestProg)
         effProg = effProg.eliminateStrcIntron()

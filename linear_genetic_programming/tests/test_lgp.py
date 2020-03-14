@@ -113,9 +113,9 @@ class Test_instruction(unittest.TestCase):
     def test_lgpclassifierIris(self):
         X_train, X_test, y_train, y_test = self.test_readDataIris()
         # print(X_train.shape[1])
-        lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 4, populationSize = 100,
-                            fitnessThreshold = 1.0, maxGeneration = 20, showGenerationStat = True, tournamentSize=16,
-                            randomSampling=False, evolutionStrategy="steady state")
+        lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 4, populationSize = 200,
+                            fitnessThreshold = 1.0, maxGeneration = 30, showGenerationStat = True, tournamentSize=16,
+                            isRandomSampling=True, evolutionStrategy="steady state")
 
         lgp.fit(X_train, y_train)
         # print(lgp.predict(X_test))
@@ -132,8 +132,8 @@ class Test_instruction(unittest.TestCase):
         #print(X_train.shape[1])
         lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 200, populationSize = 500,
                             fitnessThreshold = 0.95, max_prog_ini_length = 30, min_prog_ini_length = 10,
-                            maxGeneration = 200, tournamentSize=16, evolutionStrategy = "steady state",
-                            randomSampling=False, maxProgLength = 500)
+                            maxGeneration = 30, tournamentSize=16, evolutionStrategy = "steady state",
+                            isRandomSampling=True, maxProgLength = 500)
         lgp.fit(X_train, y_train)
         y_pred = lgp.predict(X_test)
         print("Testing set accuracy")

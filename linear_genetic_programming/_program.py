@@ -42,7 +42,8 @@ class Program:
 
     # input is 1 dimension 1 row data
     def execute(self, numberOfVariable, register, X_train):
-        check_float_range = lambda x: np.clip(x , -np.sqrt(np.finfo(np.float64).max), np.sqrt(np.finfo(np.float64).max))
+        data_type = X_train[0].dtype
+        check_float_range = lambda x: np.clip(x , -np.sqrt(np.finfo(data_type).max), np.sqrt(np.finfo(data_type).max))
         registerCopy = copy.deepcopy(register)
         for i in range(len(X_train)):
             registerCopy[i + numberOfVariable] = X_train[i]

@@ -56,29 +56,30 @@ class Evolve:
                 loser2dx = rand2[i]
         return win1Idx, win2Idx, loser1dx, loser2dx
 
-    def displayStatistics(self, g, bestIndividual, randomSamplingSize):
+    def displayStatistics(self, g, bestIndividual, isRandomSampling):
+        ranSamplingStatus = " RandomSampling" if isRandomSampling else ""
         print("Gen " + str(g) + ": Best indv=" + str(round(bestIndividual.fitness, 2))
                 +", CE=" + str(bestIndividual.classificationError)
                 + ", Pop avg=" + str(round(self.p.getAverageFitness(), 2))
-                + ", RanSample Sz=" + str(randomSamplingSize) )
+                + str(ranSamplingStatus))
 
     def evolveGeneration(self, pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput, numberOfOperation,
                          numberOfConstant, register, pInsert, maxProgLength, minProgLength,
-                         X_train, y_train, fitnessThreshold, showGenerationStat, randomSampling, evolutionStrategy):
+                         X_train, y_train, fitnessThreshold, showGenerationStat, isRandomSampling, evolutionStrategy):
         if evolutionStrategy == "population":
             return self.populationalEvolution(pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput,
                                   numberOfOperation, numberOfConstant, register, pInsert, maxProgLength, minProgLength,
-                                  X_train, y_train, fitnessThreshold, showGenerationStat, randomSampling)
+                                  X_train, y_train, fitnessThreshold, showGenerationStat, isRandomSampling)
         elif evolutionStrategy == "steady state":
             return self.stedyStateEvolution(pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput,
                                   numberOfOperation, numberOfConstant, register, pInsert, maxProgLength, minProgLength,
-                                  X_train, y_train, fitnessThreshold, showGenerationStat)
+                                  X_train, y_train, fitnessThreshold, showGenerationStat, isRandomSampling)
         else:
             raise ValueError("Please choose between populational or steady state")
 
     def stedyStateEvolution(self, pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput, numberOfOperation,
                          numberOfConstant, register, pInsert, maxProgLength, minProgLength,
-                         X_train, y_train, fitnessThreshold, showGenerationStat):
+                         X_train, y_train, fitnessThreshold, showGenerationStat, isRandomSampling):
         '''
         Implements "Linear genetic programming" Algorithm 2.1
         '''
@@ -111,9 +112,17 @@ class Evolve:
                     GeneticOperations.microMutation(winner2, pRegMut, pConst, numberOfVariable, numberOfInput, numberOfOperation,
                                        numberOfConstant)
 
-                # update bestIndividual
-                winner1.evaluate(numberOfVariable, register, X_train, y_train)
-                winner2.evaluate(numberOfVariable, register, X_train, y_train)
+                # Random Sampling Technique
+                if isRandomSampling:
+                    # random sampling in constant size, half of the population
+                    indexArray = np.random.choice(X_train.shape[0], X_train.shape[0] // 2, replace=False)
+                    X_subset = X_train[indexArray, :]
+                    y_subset = y_train[indexArray]
+                    winner1.evaluate(numberOfVariable, register, X_subset, y_subset)
+                    winner2.evaluate(numberOfVariable, register, X_subset, y_subset)
+                else:
+                    winner1.evaluate(numberOfVariable, register, X_train, y_train)
+                    winner2.evaluate(numberOfVariable, register, X_train, y_train)
 
                 if winner1.fitness > bestIndividual.fitness:
                     bestIndividual = winner1
@@ -124,27 +133,25 @@ class Evolve:
                 self.p.population[loser2Idx] = winner2
 
             if showGenerationStat:
-                self.displayStatistics(g, bestIndividual, randomSamplingSize="no")
+                self.displayStatistics(g, bestIndividual, isRandomSampling)
 
+            if not isRandomSampling:
             # if the solution has been found, end the loop
-            if bestIndividual.fitness >= fitnessThreshold:
-                return bestIndividual
+                if bestIndividual.fitness >= fitnessThreshold:
+                    return bestIndividual
 
-            # self.p.displayPopulationFitness()
         return bestIndividual
 
     def populationalEvolution(self, pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput, numberOfOperation,
                          numberOfConstant, register, pInsert, maxProgLength, minProgLength,
-                         X_train, y_train, fitnessThreshold, showGenerationStat, randomSampling):
+                         X_train, y_train, fitnessThreshold, showGenerationStat, isRandomSampling):
         '''
         traditional genetic evolution
         '''
-        g = 0
-        randomSamplingSize = "No random sampling"
         self.p.evaluatePopulation(numberOfVariable, register, X_train, y_train)
         bestIndividual = self.p.getBestIndividual()
 
-        while g < self.maxGeneration:
+        for g in range(self.maxGeneration):
             child_p = Population()
 
             while len(child_p.population) < len(self.p.population):
@@ -173,16 +180,11 @@ class Evolve:
                 child_p.population.append(child2)
 
             # Random Sampling Technique
-            if randomSampling:
-                # subset need to have a least one row
-                ranIndex1, ranIndex2 = np.random.choice(X_train.shape[0], 2, replace=False)
-                randomSamplingSize = abs(ranIndex1 - ranIndex2)
-                if ranIndex1 < ranIndex2:
-                    X_subset = X_train[ranIndex1:ranIndex2, :]
-                    y_subset = y_train[ranIndex1:ranIndex2]
-                else:
-                    X_subset = X_train[ranIndex2:ranIndex1, :]
-                    y_subset = y_train[ranIndex2:ranIndex1]
+            if isRandomSampling:
+                # random sampling in constant size, half of the population
+                indexArray = np.random.choice(X_train.shape[0], X_train.shape[0]//2, replace=False)
+                X_subset = X_train[indexArray, :]
+                y_subset = y_train[indexArray]
                 child_p.evaluatePopulation(numberOfVariable, register, X_subset, y_subset)
             else:
                 child_p.evaluatePopulation(numberOfVariable, register, X_train, y_train)
@@ -190,14 +192,13 @@ class Evolve:
             self.p = child_p  # offspring replace parent population
             bestIndividual = self.p.getBestIndividual()
             if showGenerationStat:
-                self.displayStatistics(g, bestIndividual, randomSamplingSize)
+                self.displayStatistics(g, bestIndividual, isRandomSampling)
 
-            if not randomSampling:
+            if not isRandomSampling:
             # if the solution has been found, end the loop
                 if bestIndividual.fitness >= fitnessThreshold:
                     return bestIndividual
 
-            g += 1
         return bestIndividual
 
 
