@@ -113,6 +113,7 @@ class Program:
         self.classificationError = np.argwhere(y != y_pred).size
 
     def predictProbaSigmoid(self, numberOfVariable, register, singleX):
+        self.progLen = len(self.seq)
         exonProgram = copy.deepcopy(self)
         exonProgram = exonProgram.eliminateStrcIntron()
         self.effProgLen = len(exonProgram.seq)

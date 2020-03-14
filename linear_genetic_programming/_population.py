@@ -34,3 +34,6 @@ class Population:
 
     def getAvgEffProgLen(self):
         return np.mean([prog.effProgLen for prog in self.population])
+
+    def getAvgProgLen(self):
+        return np.mean([prog.progLen for prog in self.population])

@@ -57,14 +57,14 @@ class Evolve:
         return win1Idx, win2Idx, loser1dx, loser2dx
 
     def displayHeader(self):
-        print("{:^3}|{:^9}|{:^6}|{:^7}|{:^12}|{:^13}".format("Gen", "Best Indv", "CE", "Pop Avg", "Ran Sampling", "AvgEffProgLen"))
-        print('-' * 3 + ' ' + '-' * 9 + ' ' + '-' * 6 + ' ' + '-' * 7 + ' ' + '-' * 12 + ' ' + '-' * 13)
+        print("{:^3}|{:^9}|{:^6}|{:^7}|{:^12}|{:^10}|{:^13}".format("Gen", "Best Indv", "CE", "Pop Avg", "Ran Sampling", "AvgProgLen", "AvgEffProgLen"))
+        print('-' * 3 + ' ' + '-' * 9 + ' ' + '-' * 6 + ' ' + '-' * 7 + ' ' + '-' * 12 + ' ' + '-' * 10 + ' ' + '-' * 13)
 
     def displayStatistics(self, g, bestIndividual, isRandomSampling):
         ranSamplingStatus = "True" if isRandomSampling else "False"
-        line_format = '{0:>3d}|{1:>9.2f}|{2:>6d}|{3:>7.2f}|{4:>12s}|{5:>13.2f}'
+        line_format = '{0:>3d}|{1:>9.2f}|{2:>6d}|{3:>7.2f}|{4:>12s}|{5:>10.2f}|{6:>13.2f}'
         print(line_format.format(g, bestIndividual.fitness, bestIndividual.classificationError,
-              self.p.getAverageFitness(), ranSamplingStatus, self.p.getAvgEffProgLen()))
+              self.p.getAverageFitness(), ranSamplingStatus, self.p.getAvgProgLen(), self.p.getAvgEffProgLen() ))
 
     def evolveGeneration(self, pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput, numberOfOperation,
                          numberOfConstant, register, pInsert, maxProgLength, minProgLength,

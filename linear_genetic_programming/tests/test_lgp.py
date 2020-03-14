@@ -115,7 +115,7 @@ class Test_instruction(unittest.TestCase):
         # print(X_train.shape[1])
         lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 4, populationSize = 20,
                             fitnessThreshold = 1.0, maxGeneration = 10, showGenerationStat = True, tournamentSize=8,
-                            isRandomSampling=True, evolutionStrategy="steady state")
+                            isRandomSampling=True, evolutionStrategy="population") # steady state
 
         lgp.fit(X_train, y_train)
         # print(lgp.predict(X_test))
