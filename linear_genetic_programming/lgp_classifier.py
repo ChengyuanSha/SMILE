@@ -33,12 +33,15 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     maxGenerations : integer, optional (default=1000)
         The number of generations to evolve.
 
+
+    isRandomSampling: Boolean
+        train the genetic algorithm on random sampled dataset (without replacement)
+
     evolutionStrategy: "population" or "steady state"
         population: traditional genetic algorithm
 
-    constInitRange: initiation of the constant set. tuple (start, stop, step)
-        [start, stop)
-
+    constInitRange: tuple (start, stop, step)
+        initiation of the constant set. [start, stop)
 
     '''
 

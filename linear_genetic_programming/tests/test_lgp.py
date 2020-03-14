@@ -113,8 +113,8 @@ class Test_instruction(unittest.TestCase):
     def test_lgpclassifierIris(self):
         X_train, X_test, y_train, y_test = self.test_readDataIris()
         # print(X_train.shape[1])
-        lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 4, populationSize = 200,
-                            fitnessThreshold = 1.0, maxGeneration = 30, showGenerationStat = True, tournamentSize=16,
+        lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 4, populationSize = 20,
+                            fitnessThreshold = 1.0, maxGeneration = 10, showGenerationStat = True, tournamentSize=8,
                             isRandomSampling=True, evolutionStrategy="steady state")
 
         lgp.fit(X_train, y_train)

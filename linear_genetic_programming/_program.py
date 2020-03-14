@@ -6,12 +6,16 @@ from sklearn.utils.multiclass import unique_labels
 
 class Program:
     '''
+    A list of sequence
+
     Attributes
     ----------
     seq : python list
         contain a list of Instructions
     fitness: int
         contain calculated fitness
+    classificationError: int
+        number of misclassified samples
     '''
     OP_ADD = 0
     OP_SUBTRACT = 1
@@ -21,8 +25,8 @@ class Program:
 
     def __init__(self):
         self.seq = []
-        self.fitness = -1
-        self.classificationError = -1
+        # self.fitness = -1
+        # self.classificationError = -1
 
     def makeRandomeProg(self, numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, length, pConst):
         self.seq = [Instruction(numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, pConst, 0.5) for _

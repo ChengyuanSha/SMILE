@@ -56,12 +56,22 @@ class Evolve:
                 loser2dx = rand2[i]
         return win1Idx, win2Idx, loser1dx, loser2dx
 
+    # def displayStatistics(self, g, bestIndividual, isRandomSampling):
+    #     ranSamplingStatus = " RandomSampling" if isRandomSampling else ""
+    #     print("Gen " + str(g) + ": Best indv=" + str(round(bestIndividual.fitness, 2))
+    #             +", CE=" + str(bestIndividual.classificationError)
+    #             + ", Pop avg=" + str(round(self.p.getAverageFitness(), 2))
+    #             + str(ranSamplingStatus))
+
+    def displayHeader(self):
+        print("{:^3}|{:^9}|{:^6}|{:^7}|{:^12}".format("Gen", "Best Indv", "CE", "Pop Avg", "Ran Sampling"))
+        print('-' * 3 + ' ' + '-' * 9 + ' ' + '-' * 6 + ' ' + '-' * 7 + ' ' + '-' * 12)
+
     def displayStatistics(self, g, bestIndividual, isRandomSampling):
-        ranSamplingStatus = " RandomSampling" if isRandomSampling else ""
-        print("Gen " + str(g) + ": Best indv=" + str(round(bestIndividual.fitness, 2))
-                +", CE=" + str(bestIndividual.classificationError)
-                + ", Pop avg=" + str(round(self.p.getAverageFitness(), 2))
-                + str(ranSamplingStatus))
+        ranSamplingStatus = "True" if isRandomSampling else "False"
+        line_format = '{0:>3d}|{1:>9.2f}|{2:>6d}|{3:>7.2f}|{4:>12s}'
+        print(line_format.format(g, bestIndividual.fitness, bestIndividual.classificationError,
+              self.p.getAverageFitness(), ranSamplingStatus))
 
     def evolveGeneration(self, pRegMut, pMicro, pMacro, pConst, pCrossover, numberOfVariable, numberOfInput, numberOfOperation,
                          numberOfConstant, register, pInsert, maxProgLength, minProgLength,
@@ -83,6 +93,7 @@ class Evolve:
         '''
         Implements "Linear genetic programming" Algorithm 2.1
         '''
+        self.displayHeader()
         self.p.evaluatePopulation(numberOfVariable, register, X_train, y_train)
         bestIndividual = self.p.getBestIndividual()
 
@@ -115,7 +126,9 @@ class Evolve:
                 # Random Sampling Technique
                 if isRandomSampling:
                     # random sampling in constant size, half of the population
-                    indexArray = np.random.choice(X_train.shape[0], X_train.shape[0] // 2, replace=False)
+                    X_size = X_train.shape[0]
+                    samplingSize = np.random.choice(np.arange(X_size//2, X_size))
+                    indexArray = np.random.choice(X_size, samplingSize, replace=False)
                     X_subset = X_train[indexArray, :]
                     y_subset = y_train[indexArray]
                     winner1.evaluate(numberOfVariable, register, X_subset, y_subset)
@@ -148,6 +161,7 @@ class Evolve:
         '''
         traditional genetic evolution
         '''
+        self.displayHeader()
         self.p.evaluatePopulation(numberOfVariable, register, X_train, y_train)
         bestIndividual = self.p.getBestIndividual()
 
@@ -181,8 +195,8 @@ class Evolve:
 
             # Random Sampling Technique
             if isRandomSampling:
-                # random sampling in constant size, half of the population
-                indexArray = np.random.choice(X_train.shape[0], X_train.shape[0]//2, replace=False)
+                X_size = X_train.shape[0]
+                indexArray = np.random.choice(X_size, X_size//2, replace=False)
                 X_subset = X_train[indexArray, :]
                 y_subset = y_train[indexArray]
                 child_p.evaluatePopulation(numberOfVariable, register, X_subset, y_subset)
