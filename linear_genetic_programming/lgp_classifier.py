@@ -9,48 +9,113 @@ from sklearn.utils.multiclass import unique_labels
 
 class LGPClassifier(BaseEstimator, ClassifierMixin):
     '''
-    A Linear Genetic Programming classifier
+    Linear Genetic Programming algorithm with scikit learn inspired API.
 
     Parameters
     ----------
     numberOfInput : integer, required
-        number of features, X.shape[1]
+        Number of features, can be obtained use X.shape[1]
 
     numberOfOperation: integer, optional
-        +, -, *, /, ^, if less, if more
+        Operation consists of (+, -, *, /, ^) and branch (if less, if more)
 
     numberOfVariable: integer, optional (default=4)
         A variable number of additional registers used to aid in calculations performed
         as part of a program. Generally, these are initialized with a default value
         before a program is executed.
 
+    numberOfConstant: int, optional
+        Number of constant in register. Constants are stored in registers that are
+        write-protected. Constant registers are only initialized once at the beginning
+        with values from a constInitRange.
 
+    max_prog_ini_length: int, optional
+        Max program initialization length
 
-    tournament_size : integer, optional (default=4)
-        The number of programs that will compete to become part of the next
+    min_prog_ini_length: int, optional
+        Min program initialization length
+
+    maxProgLength: int, optional
+        maximum program length limit during evolution.
+
+    minProgLength: int, optional
+        minimum program length required during evolution.
+
+    pCrossover: float, optional
+        Probability of exchanging the genetic information of two parent programs
+
+    pConst: float, optional
+        Control the probability of constant in Instruciton initialization. It controls whether the
+        register will be a constant. It also controls mutation probability in micromutaion. It controls
+        whether a register will mutate to constant.
+
+    pInsert: float, optional
+        Control probability of insertion in macromutation. It will insert a random instruction
+        into the program.
+
+    pRegmut: float, optional
+        Control probability of register mutation used in micromutaion. It will either mutate
+        register1, register2 or return register.
+
+    pMacro: float, optional
+        Probability of macromutation, Macromutation operate on the level of program. It will add
+        or delete instruction. It will affect program size.
+
+    pMicro: float, optional
+        Probability of micromuation. Micromuation operate on the level of instruction components
+        (micro level) and manipulate registers, operators, and constants.
+
+    tournament_size : integer, optional
+        The size of tournament selection. The number of programs that will compete to become part of the next
         generation.
 
-    maxGenerations : integer, optional (default=1000)
+    maxGenerations : integer, optional
         The number of generations to evolve.
 
+    fitnessThreshold: float, optional
+        When not using random sampling, terminate the evolution if threshold is met'
 
-    isRandomSampling: Boolean
-        train the genetic algorithm on random sampled dataset (without replacement)
+    populationSize: int, optional
+        Size of population
 
-    evolutionStrategy: "population" or "steady state"
-        population: traditional genetic algorithm
+    showGenerationStat: boolean, optional
+        If True, print out statistic in each generation
 
-    constInitRange: tuple (start, stop, step)
-        initiation of the constant set. [start, stop)
+    isRandomSampling: Boolean, optional
+        Train the genetic algorithm on random sampled dataset (without replacement)
 
+    evolutionStrategy: "population" or "steady state", optional
+        Population: traditional genetic algorithm
+
+    constInitRange: tuple (start, stop, step), optional
+        Initiation of the constant set. [start, stop)
+
+    Attributes
+    ----------
+    register_: array of shape (numberOfInput + numberOfVariable + numberOfConstant, )
+        Register stores the calculation variables, feature values and constants.
+
+    bestProg_: class Program
+        A list of Instructions used for classification calculation
+
+    bestProFitness_ : float
+        Training set accuracy score of the best program
+
+    bestProgStr_: str
+        String representation of the best program
+
+    bestEffProgStr_: str
+        Intron removed program
+
+    populationAvg_: float
+        Average fitness of the final generation
     '''
 
     def __init__(self,
-                 numberOfInput = 3,
+                 numberOfInput,
                  numberOfOperation = 5,
                  numberOfVariable = 4,
                  numberOfConstant = 9,
-                 macro_mutate_rate = 0.5,
                  max_prog_ini_length = 30,
                  min_prog_ini_length = 10,
                  maxProgLength = 200,
@@ -58,11 +123,11 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                  pCrossover = 0.75,
                  pConst = 0.5,
                  pInsert = 0.5,
-                 pRegmut = 0.1,
+                 pRegmut = 0.6,
                  pMacro = 0.75,
                  pMicro = 0.5,
                  tournamentSize = 2,
-                 maxGeneration = 2,
+                 maxGeneration = 200,
                  fitnessThreshold = 1.0,
                  populationSize = 1000,
                  showGenerationStat = True,
@@ -73,7 +138,6 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.numberOfOperation = numberOfOperation
         self.numberOfVariable = numberOfVariable
         self.numberOfConstant = numberOfConstant
-        self.macro_mutate_rate = macro_mutate_rate
         self.max_prog_ini_length = max_prog_ini_length
         self.min_prog_ini_length = min_prog_ini_length
         self.maxProgLength = maxProgLength
@@ -93,8 +157,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.evolutionStrategy = evolutionStrategy
         self.constInitRange = constInitRange
 
-    #   register numberOfInput + numberOfVariable + numberOfConstant
     def __generateRegister(self):
+        #   register numberOfInput + numberOfVariable + numberOfConstant
         register_length = self.numberOfInput + self.numberOfVariable + self.numberOfConstant
         register = np.zeros(register_length, dtype=float)
         for i in range(self.numberOfVariable + self.numberOfInput):
@@ -110,6 +174,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     def fit(self, X, y):
         """
         Fit the Genetic Program according to X, y.
+
         Parameters
         ----------
         X : array-like, shape = [n_samples, n_features]
@@ -117,8 +182,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
-        classes_ : ndarray, shape (n_classes,)
-            The classes seen at :meth:`fit`.
+
         Returns
         -------
         self : best program for classification
@@ -151,15 +215,22 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.bestProFitness_ = round(bestProg.fitness, 4)
         self.populationAvg_ = round(e.p.getAverageFitness(), 4)
 
-        # `fit` should always return `self`
         return self
 
     def predict(self, X):
-        '''
-        Use best program to predict y
-        :param X_test:
-        :return:
-        '''
+        """
+        Predict using the best fit genetic model.
+
+        Parameters
+        ----------
+        X : array_like or sparse matrix, shape (n_samples, n_features)
+            Samples.
+
+        Returns
+        -------
+        C : array, shape (n_samples,)
+            Returns predicted values.
+        """
         X = check_array(X)
         check_is_fitted(self)
         classType = self.classes_[0].dtype
@@ -167,36 +238,35 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         y_pred = np.zeros(n_samples, dtype=classType)
         for i, row in enumerate(X):
             pred = self.bestProg_.predictProbaSigmoid(self.numberOfVariable, self.register_, row)
-            if pred <= 0.5:  # class A
+            if pred <= 0.5:  # class 0
                 y_pred[i] = self.classes_[0]
-            else:  # class B
+            else:  # class 1
                 y_pred[i] = self.classes_[1]
         return y_pred
 
-    # may wrong in return format, check it later
-    def predict_proba(self, X):
-        """
-        Probability estimates.
-        The returned estimates for all classes are ordered by the
-        label of classes.
-        Parameters
-        ----------
-        X : array-like of shape (n_samples, n_features)
-           Vector to be scored, where `n_samples` is the number of samples and
-           `n_features` is the number of features.
-        Returns
-        -------
-        T : array-like of shape (n_samples, n_classes)
-           Returns the probability of the sample for each class in the model,
-           where classes are ordered as they are in ``self.classes_``.
-        """
-        check_is_fitted(self)
-
-        n_samples = X.shape[0]
-        y_pred = np.zeros(n_samples, dtype=np.float64)
-        for i, row in enumerate(X):
-            y_pred[i] = self.bestProg_.predictProbaSigmoid(self.numberOfVariable, self.register_, row)
-        return y_pred
+    # def predict_proba(self, X):
+    #     """
+    #     Probability estimates.
+    #     The returned estimates for all classes are ordered by the
+    #     label of classes.
+    #     Parameters
+    #     ----------
+    #     X : array-like of shape (n_samples, n_features)
+    #        Vector to be scored, where `n_samples` is the number of samples and
+    #        `n_features` is the number of features.
+    #     Returns
+    #     -------
+    #     T : array-like of shape (n_samples, n_classes)
+    #        Returns the probability of the sample for each class in the model,
+    #        where classes are ordered as they are in ``self.classes_``.
+    #     """
+    #     check_is_fitted(self)
+    #
+    #     n_samples = X.shape[0]
+    #     y_pred = np.zeros(n_samples, dtype=np.float64)
+    #     for i, row in enumerate(X):
+    #         y_pred[i] = self.bestProg_.predictProbaSigmoid(self.numberOfVariable, self.register_, row)
+    #     return y_pred
 
     def _more_tags(self):
         return {'binary_only': True}

@@ -8,6 +8,8 @@ from DataPreprocessing import DataPreprocessing
 from linear_genetic_programming.lgp_classifier import LGPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_breast_cancer
+from sklearn.preprocessing import MinMaxScaler
 numberOfInput = 4
 numberOfOperation = 5
 numberOfVariable = 4
@@ -140,3 +142,26 @@ class Test_instruction(unittest.TestCase):
         print(accuracy_score(y_test, y_pred))
         print(lgp.bestProgStr_)
         print(lgp.bestEffProgStr_)
+
+
+    def test_breast_cancer(self):
+        X, y = load_breast_cancer(return_X_y=True)
+        scaler = MinMaxScaler((-1, 1))
+        X = scaler.fit_transform(X)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+        lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 18, populationSize = 300,
+                            fitnessThreshold = 1.0, maxGeneration = 50, showGenerationStat = True, tournamentSize=14,
+                            isRandomSampling=True, evolutionStrategy="steady state") # steady state
+
+        lgp.fit(X_train, y_train)
+        # print(lgp.predict(X_test))
+        print("Testing set accuracy")
+        y_pred = lgp.predict(X_test)
+        print(accuracy_score(y_test, y_pred))
+        print(lgp.bestProgStr_)
+        print(lgp.bestEffProgStr_)
+
+
+
+
+

@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Linear Genetic Programming’s documentation &#8212; LGP 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="linear-genetic-programming-s-documentation">
+<h1>Linear Genetic Programming’s documentation<a class="headerlink" href="#linear-genetic-programming-s-documentation" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="another">
+<h1>Another<a class="headerlink" href="#another" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><div class="line-block">
+<div class="line">This is an introduction</div>
+</div>
+</div></blockquote>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This is the introduction of demo。</p>
+</div>
+<div class="section" id="module-linear_genetic_programming.lgp_classifier">
+<span id="lgp-api"></span><h1>LGP API<a class="headerlink" href="#module-linear_genetic_programming.lgp_classifier" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier">
+<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=200</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">evolutionStrategy='steady state'</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear Genetic Programming algorithm with scikit learn inspired API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>numberOfInput</strong><span class="classifier">integer, required</span></dt><dd><p>Number of features, can be obtained use X.shape[1]</p>
+</dd>
+<dt><strong>numberOfOperation: integer, optional</strong></dt><dd><p>Operation consists of (+, -, <a href="#id1"><span class="problematic" id="id2">*</span></a>, /, ^) and branch (if less, if more)</p>
+</dd>
+<dt><strong>numberOfVariable: integer, optional (default=4)</strong></dt><dd><p>A variable number of additional registers used to aid in calculations performed
+as part of a program. Generally, these are initialized with a default value
+before a program is executed.</p>
+</dd>
+<dt><strong>numberOfConstant: int</strong></dt><dd><p>Number of constant in register. Constants are stored in registers that are
+write-protected. Constant registers are only initialized once at the beginning
+with values from a constInitRange.</p>
+</dd>
+<dt><strong>max_prog_ini_length: int</strong></dt><dd><p>Max program initialization length</p>
+</dd>
+<dt><strong>min_prog_ini_length: int</strong></dt><dd><p>Min program initialization length</p>
+</dd>
+<dt><strong>maxProgLength: int</strong></dt><dd><p>maximum program length limit during evolution.</p>
+</dd>
+<dt><strong>minProgLength: int</strong></dt><dd><p>minimum program length required during evolution.</p>
+</dd>
+<dt><strong>pCrossover: float</strong></dt><dd><p>Probability of exchanging the genetic information of two parent programs</p>
+</dd>
+<dt><strong>pConst: float</strong></dt><dd><p>Control the probability of constant in Instruciton initialization. It controls whether the
+register will be a constant. It also controls mutation probability in micromutaion. It controls
+whether a register will mutate to constant.</p>
+</dd>
+<dt><strong>pInsert: float</strong></dt><dd><p>Control probability of insertion in macromutation. It will insert a random instruction
+into the program.</p>
+</dd>
+<dt><strong>pRegmut: float</strong></dt><dd><p>Control probability of register mutation used in micromutaion. It will either mutate
+register1, register2 or return register.</p>
+</dd>
+<dt><strong>pMacro: float</strong></dt><dd><p>Probability of macromutation, Macromutation operate on the level of program. It will add
+or delete instruction. It will affect program size.</p>
+</dd>
+<dt><strong>pMicro: float</strong></dt><dd><p>Probability of micromuation. Micromuation operate on the level of instruction components
+(micro level) and manipulate registers, operators, and constants.</p>
+</dd>
+<dt><strong>tournament_size</strong><span class="classifier">integer, optional (default=4)</span></dt><dd><p>The size of tournament selection. The number of programs that will compete to become part of the next
+generation.</p>
+</dd>
+<dt><strong>maxGenerations</strong><span class="classifier">integer, optional (default=200)</span></dt><dd><p>The number of generations to evolve.</p>
+</dd>
+<dt><strong>fitnessThreshold: float</strong></dt><dd><p>When not using random sampling, terminate the evolution if threshold is met’</p>
+</dd>
+<dt><strong>populationSize: int</strong></dt><dd><p>Size of population</p>
+</dd>
+<dt><strong>showGenerationStat: boolean</strong></dt><dd><p>If True, print out statistic in each generation</p>
+</dd>
+<dt><strong>isRandomSampling: Boolean</strong></dt><dd><p>Train the genetic algorithm on random sampled dataset (without replacement)</p>
+</dd>
+<dt><strong>evolutionStrategy: “population” or “steady state”</strong></dt><dd><p>Population: traditional genetic algorithm</p>
+</dd>
+<dt><strong>constInitRange: tuple (start, stop, step)</strong></dt><dd><p>Initiation of the constant set. [start, stop)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>register_: array of shape (numberOfInput + numberOfVariable + numberOfConstant, )</strong></dt><dd><p>Register stores the calculation variables, feature values and constants.</p>
+</dd>
+<dt><strong>bestProg_: class Program</strong></dt><dd><p>A list of Instructions used for classification calculation</p>
+</dd>
+<dt><strong>bestProFitness_</strong><span class="classifier">float</span></dt><dd><p>Training set accuracy score of the best program</p>
+</dd>
+<dt><strong>bestProgStr_: str</strong></dt><dd><p>String representation of the best program</p>
+</dd>
+<dt><strong>bestEffProgStr_: str</strong></dt><dd><p>Intron removed program</p>
+</dd>
+<dt><strong>populationAvg_: float</strong></dt><dd><p>Average fitness of the final generation</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.fit" title="linear_genetic_programming.lgp_classifier.LGPClassifier.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y)</p></td>
+<td><p>Fit the Genetic Program according to X, y.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, X)</p></td>
+<td><p>Predict using the best fit genetic model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>(self, X, y[, sample_weight])</p></td>
+<td><p>Return the mean accuracy on the given test data and labels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the Genetic Program according to X, y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples and
+n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>Target values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">best program for classification</span></dt><dd><p>Returns self.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict using the best fit genetic model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array_like or sparse matrix, shape (n_samples, n_features)</span></dt><dd><p>Samples.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>C</strong><span class="classifier">array, shape (n_samples,)</span></dt><dd><p>Returns predicted values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="need-help">
+<h1>Need Help<a class="headerlink" href="#need-help" title="Permalink to this headline">¶</a></h1>
+<p>if you need help</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">LGP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Chengyuan Sha.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
