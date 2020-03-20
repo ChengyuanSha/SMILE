@@ -4,6 +4,7 @@ from linear_genetic_programming._instruction import Instruction
 from linear_genetic_programming._program import Program
 from linear_genetic_programming._evolve import Evolve
 from linear_genetic_programming._population import Population
+from linear_genetic_programming._genetic_operations import GeneticOperations
 from DataPreprocessing import DataPreprocessing
 from linear_genetic_programming.lgp_classifier import LGPClassifier
 from sklearn.metrics import accuracy_score
@@ -74,8 +75,7 @@ class Test_instruction(unittest.TestCase):
     def test_micromutation(self):
         pro1 = self.test_program_init()
         p = self.test_population_init()
-        test_e = Evolve(2, 100, p)  # tournamentSize, maxGeneration, population
-        test_e.microMutation(pro1, pRegMut, pConst, numberOfVariable,
+        GeneticOperations.microMutation(pro1, pRegMut, pConst, numberOfVariable,
                       numberOfInput, numberOfOperation, numberOfConstant)
         print(pro1.toString(numberOfVariable, numberOfInput, register))
 
@@ -100,14 +100,14 @@ class Test_instruction(unittest.TestCase):
 
 
     def test_readDataRuijin(self):
-        path = "C:/Users/10455/Desktop/QueensLocal/CISC499/GeneticAlgorithm/LGP_PY/dataset/RuiJin_Processed.csv"
+        path = "../../dataset/RuiJin_Processed.csv"
         X, y, names = DataPreprocessing.readDataRuiJin(path)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
         return X_train, X_test, y_train, y_test
 
     def test_readDataIris(self):
         # 0: "Versicolor", 1: "Virginica"
-        path = "C:/Users/10455/Desktop/QueensLocal/CISC499/GeneticAlgorithm/LGP_PY/dataset/iris.csv"
+        path = "../../dataset/iris.csv"
         X, y, names= DataPreprocessing.readDataIris(path)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
         return X_train, X_test, y_train, y_test
@@ -127,6 +127,7 @@ class Test_instruction(unittest.TestCase):
         print(lgp.bestProgStr_)
         print(lgp.bestEffProgStr_)
 
+        # many tests
         #check_estimator(lgp)
 
     def test_lgpclassifierRuijin(self):

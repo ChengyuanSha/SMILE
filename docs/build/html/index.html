@@ -36,11 +36,22 @@
 <h1>Linear Genetic Programming’s documentation<a class="headerlink" href="#linear-genetic-programming-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>This is the introduction of demo。</p>
-</div>
+<blockquote>
+<div><p><cite>It is not the strongest of the species that survives, nor the most intelligent that survives.
+It is the one that is most adaptable to change.
+— Charles Darwin</cite></p>
+</div></blockquote>
+<p>Linear Genetic Programming (LGP) is a paradigm of genetic programming that employs a representation of
+linearly sequenced instructions. A population of diverse candidate models is initialized randomly and
+will improve prediction accuracy gradually using random sampled training set through a number of generations.
+After evolution, the best model with highest fitness score (i.e. accuracy on random sampled training set) will
+be the output.</p>
+<p>linear genetic programming package implements LGP algorithm in python, with a scikit-learn compatible API.
+It retains the familiar scikit-learn <cite>fit/predict</cite> API and works with the existing scikit-learn modules (e.g.
+<a class="reference external" href="http://scikit-learn.org/stable/modules/grid_search.html">grid search</a> ).</p>
 </div>
 <div class="section" id="module-linear_genetic_programming.lgp_classifier">
-<span id="lgp-api"></span><h1>LGP API<a class="headerlink" href="#module-linear_genetic_programming.lgp_classifier" title="Permalink to this headline">¶</a></h1>
+<span id="lgp-api"></span><h2>LGP API<a class="headerlink" href="#module-linear_genetic_programming.lgp_classifier" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier">
 <em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
@@ -95,7 +106,8 @@ When using random sampling, fitnessThreshold has no effect.</p>
 </dd>
 <dt><strong>populationSize: integer, optional, (default=1000)</strong></dt><dd><p>Size of population</p>
 </dd>
-<dt><strong>showGenerationStat: boolean, optional, (default=True)</strong></dt><dd><p>If True, print out statistic in each generation</p>
+<dt><strong>showGenerationStat: boolean, optional, (default=True)</strong></dt><dd><p>If True, print out statistic in each generation.
+Set to False to save time. Some average statistical calculations is time consuming.</p>
 </dd>
 <dt><strong>isRandomSampling: Boolean, optional, (default=True)</strong></dt><dd><p>Train the genetic algorithm on random sampled dataset (without replacement)</p>
 </dd>
@@ -136,10 +148,13 @@ When using random sampling, fitnessThreshold has no effect.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, X)</p></td>
 <td><p>Predict using the best fit genetic model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="linear_genetic_programming.lgp_classifier.LGPClassifier.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(self, X, y[, sample_weight])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_proba</span></code></a>(self, X)</p></td>
+<td><p>Probability estimates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="linear_genetic_programming.lgp_classifier.LGPClassifier.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(self, X, y[, sample_weight])</p></td>
 <td><p>Return the mean accuracy on the given test data and labels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.set_params" title="linear_genetic_programming.lgp_classifier.LGPClassifier.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(self, \*\*params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.set_params" title="linear_genetic_programming.lgp_classifier.LGPClassifier.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(self, \*\*params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 </tbody>
@@ -209,6 +224,30 @@ contained subobjects that are estimators.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba">
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability estimates.
+The returned estimates for all classes are ordered by the
+label of classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like of shape (n_samples, n_features)</span></dt><dd><p>Vector to be scored, where <cite>n_samples</cite> is the number of samples and
+<cite>n_features</cite> is the number of features.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>T</strong><span class="classifier">array-like of shape (n_samples, n_classes)</span></dt><dd><p>Returns the probability of the sample for each class in the model,
+where classes are ordered as they are in <code class="docutils literal notranslate"><span class="pre">self.classes_</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.score">
 <code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the mean accuracy on the given test data and labels.</p>
@@ -263,16 +302,18 @@ component of a nested object.</p>
 
 </div>
 <div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
-<div class="section" id="need-help">
-<h1>Need Help<a class="headerlink" href="#need-help" title="Permalink to this headline">¶</a></h1>
-<p>if you need help</p>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.springer.com/gp/book/9780387310299">Linear_Genetic_Programming</a>.
+Authors: Brameier, Markus F., Banzhaf, Wolfgang</p>
+</div>
 </div>
 
 

@@ -242,11 +242,13 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         Probability estimates.
         The returned estimates for all classes are ordered by the
         label of classes.
+
         Parameters
         ----------
         X : array-like of shape (n_samples, n_features)
            Vector to be scored, where `n_samples` is the number of samples and
            `n_features` is the number of features.
+
         Returns
         -------
         T : array-like of shape (n_samples, n_classes)
