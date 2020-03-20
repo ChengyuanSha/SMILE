@@ -2,6 +2,8 @@ Linear Genetic Programming
 ==========================
 
 .. image:: https://readthedocs.org/projects/linear-genetic-programming/badge/?version=latest
+:target: https://linear-genetic-programming.readthedocs.io/en/latest/?badge=latest
+:alt: Documentation Status
 
 |
 
