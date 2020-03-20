@@ -93,7 +93,7 @@ class Program:
         return registerCopy[0]
 
     def sigmoid(self, x):
-        "Numerically stable sigmoid function."
+        # Numerically stable sigmoid function.
         if x >= 0:
             z = np.exp(-x)
             return 1 / (1 + z)
