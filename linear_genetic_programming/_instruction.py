@@ -37,8 +37,8 @@ class Instruction:
             r2 = np.random.randint(numberOfVariable + numberOfInput)
             reg2Index = r2
         if self.isBranch:
-            type = ["if less", "if greater"]
-            return np.random.choice(type), reg1Index, reg2Index
+            branch_type = ["if less", "if greater"]
+            return np.random.choice(branch_type), reg1Index, reg2Index
         else:
             operIndex = np.random.randint(numberOfOperation)
             # since zero is return register in calculation, make sure there are enough zeros by increasing its chance

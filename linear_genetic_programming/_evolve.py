@@ -1,5 +1,4 @@
 from linear_genetic_programming._instruction import Instruction
-from linear_genetic_programming._population import Population
 from linear_genetic_programming._genetic_operations import GeneticOperations
 import numpy as np
 import copy
