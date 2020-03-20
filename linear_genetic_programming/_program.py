@@ -105,20 +105,43 @@ class Program:
         y_class = unique_labels(y)
         y_pred = np.zeros(len(y), dtype=y_class[0].dtype)
         for i, row in enumerate(X):
-            y_pred[i] = self.predictProbaSigmoid(numberOfVariable, register, row)
-        if y_class[0].dtype == np.float:
-            self.fitness = accuracy_score(y, y_pred.round())
-        else:
-            self.fitness = accuracy_score(y, y_pred)
+            y_pred[i] = self.predictProbaSigmoid(numberOfVariable, register, row, y_class)
+        self.fitness = accuracy_score(y, y_pred)
         self.classificationError = np.argwhere(y != y_pred).size
 
-    def predictProbaSigmoid(self, numberOfVariable, register, singleX):
+    def predictProbaSigmoid(self, numberOfVariable, register, singleX, classes, returnType='class'):
+        '''
+        Parameters
+        ----------
+        numberOfVariable
+
+        register
+            register used in calculation
+        singleX: array
+            a training sample, row in X
+        classes: array of size 2
+            binary class type, eg. [0, 1]
+
+        Returns
+        -------
+        I: integer
+            return class 0 or class 1 based on the sigmoid function if returntype == 'class'
+        P: float
+            return probability if returntype == 'prob'
+        '''
         self.progLen = len(self.seq)
         exonProgram = copy.deepcopy(self)
         exonProgram = exonProgram.eliminateStrcIntron()
         self.effProgLen = len(exonProgram.seq)
         result = exonProgram.execute(numberOfVariable, register, singleX)
-        return self.sigmoid(result)
+        pred = self.sigmoid(result)
+        if returnType == 'class':
+            if pred <= 0.5:  # class 0
+                return classes[0]
+            else:  # class 1
+                return classes[1]
+        elif returnType == 'prob':
+            return pred
 
     def eliminateStrcIntron(self):
         strucIntronFreeProg = Program()

@@ -3,31 +3,25 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Linear Genetic Programming's documentation
-==========================================
-
-Another
-=======
-
- | This is an introduction
-
-
-
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
 
+Linear Genetic Programming's documentation
+==========================================
 
 Introduction
-============
+------------
 This is the introduction of demo。
 
 LGP API
 ========
 .. automodule:: linear_genetic_programming.lgp_classifier
+   :inherited-members: score
    :members:
+
 
 
 Indices and tables
@@ -37,6 +31,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-Need Help
-=========
-if you need help

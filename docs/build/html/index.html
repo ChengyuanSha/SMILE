@@ -30,28 +30,20 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="linear-genetic-programming-s-documentation">
+  <div class="toctree-wrapper compound">
+</div>
+<div class="section" id="linear-genetic-programming-s-documentation">
 <h1>Linear Genetic Programming’s documentation<a class="headerlink" href="#linear-genetic-programming-s-documentation" title="Permalink to this headline">¶</a></h1>
-</div>
-<div class="section" id="another">
-<h1>Another<a class="headerlink" href="#another" title="Permalink to this headline">¶</a></h1>
-<blockquote>
-<div><div class="line-block">
-<div class="line">This is an introduction</div>
-</div>
-</div></blockquote>
-<div class="toctree-wrapper compound">
-</div>
-</div>
 <div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This is the introduction of demo。</p>
+</div>
 </div>
 <div class="section" id="module-linear_genetic_programming.lgp_classifier">
 <span id="lgp-api"></span><h1>LGP API<a class="headerlink" href="#module-linear_genetic_programming.lgp_classifier" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier">
-<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=200</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">evolutionStrategy='steady state'</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Genetic Programming algorithm with scikit learn inspired API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -61,55 +53,53 @@
 <dt><strong>numberOfOperation: integer, optional</strong></dt><dd><p>Operation consists of (+, -, <a href="#id1"><span class="problematic" id="id2">*</span></a>, /, ^) and branch (if less, if more)</p>
 </dd>
 <dt><strong>numberOfVariable: integer, optional (default=4)</strong></dt><dd><p>A variable number of additional registers used to aid in calculations performed
-as part of a program. Generally, these are initialized with a default value
-before a program is executed.</p>
+as part of a program. Number of variable size should be at least half of feature size.</p>
 </dd>
-<dt><strong>numberOfConstant: int</strong></dt><dd><p>Number of constant in register. Constants are stored in registers that are
+<dt><strong>numberOfConstant: integer, optional, (default=9)</strong></dt><dd><p>Number of constant in register. Constants are stored in registers that are
 write-protected. Constant registers are only initialized once at the beginning
 with values from a constInitRange.</p>
 </dd>
-<dt><strong>max_prog_ini_length: int</strong></dt><dd><p>Max program initialization length</p>
+<dt><strong>max_prog_ini_length: integer, optional, (default=30)</strong></dt><dd><p>Max program initialization length</p>
 </dd>
-<dt><strong>min_prog_ini_length: int</strong></dt><dd><p>Min program initialization length</p>
+<dt><strong>min_prog_ini_length: integer, optional, (default=10)</strong></dt><dd><p>Min program initialization length</p>
 </dd>
-<dt><strong>maxProgLength: int</strong></dt><dd><p>maximum program length limit during evolution.</p>
+<dt><strong>maxProgLength: integer, optional, (default=300)</strong></dt><dd><p>maximum program length limit during evolution.</p>
 </dd>
-<dt><strong>minProgLength: int</strong></dt><dd><p>minimum program length required during evolution.</p>
+<dt><strong>minProgLength: integer, optional, (default=10)</strong></dt><dd><p>minimum program length required during evolution.</p>
 </dd>
-<dt><strong>pCrossover: float</strong></dt><dd><p>Probability of exchanging the genetic information of two parent programs</p>
+<dt><strong>pCrossover: float, optional, (default=0.75)</strong></dt><dd><p>Probability of exchanging the genetic information of two parent programs</p>
 </dd>
-<dt><strong>pConst: float</strong></dt><dd><p>Control the probability of constant in Instruciton initialization. It controls whether the
+<dt><strong>pConst: float, optional, (default=0.5)</strong></dt><dd><p>Control the probability of constant in Instruciton initialization. It controls whether the
 register will be a constant. It also controls mutation probability in micromutaion. It controls
 whether a register will mutate to constant.</p>
 </dd>
-<dt><strong>pInsert: float</strong></dt><dd><p>Control probability of insertion in macromutation. It will insert a random instruction
+<dt><strong>pInsert: float, optional, (default=0.5)</strong></dt><dd><p>Control probability of insertion in macromutation. It will insert a random instruction
 into the program.</p>
 </dd>
-<dt><strong>pRegmut: float</strong></dt><dd><p>Control probability of register mutation used in micromutaion. It will either mutate
+<dt><strong>pRegmut: float, optional, (default=0.6)</strong></dt><dd><p>Control probability of register mutation used in micromutaion. It will either mutate
 register1, register2 or return register.</p>
 </dd>
-<dt><strong>pMacro: float</strong></dt><dd><p>Probability of macromutation, Macromutation operate on the level of program. It will add
+<dt><strong>pMacro: float, optional, (default=0.75)</strong></dt><dd><p>Probability of macromutation, Macromutation operate on the level of program. It will add
 or delete instruction. It will affect program size.</p>
 </dd>
-<dt><strong>pMicro: float</strong></dt><dd><p>Probability of micromuation. Micromuation operate on the level of instruction components
+<dt><strong>pMicro: float, optional, (default=0.5)</strong></dt><dd><p>Probability of micromuation. Micromuation operate on the level of instruction components
 (micro level) and manipulate registers, operators, and constants.</p>
 </dd>
-<dt><strong>tournament_size</strong><span class="classifier">integer, optional (default=4)</span></dt><dd><p>The size of tournament selection. The number of programs that will compete to become part of the next
+<dt><strong>tournament_size</strong><span class="classifier">integer, optional, (default=2)</span></dt><dd><p>The size of tournament selection. The number of programs that will compete to become part of the next
 generation.</p>
 </dd>
-<dt><strong>maxGenerations</strong><span class="classifier">integer, optional (default=200)</span></dt><dd><p>The number of generations to evolve.</p>
+<dt><strong>maxGenerations</strong><span class="classifier">integer, optional, (default=200)</span></dt><dd><p>The number of generations to evolve.</p>
 </dd>
-<dt><strong>fitnessThreshold: float</strong></dt><dd><p>When not using random sampling, terminate the evolution if threshold is met’</p>
+<dt><strong>fitnessThreshold: float, optional, (default=1.0)</strong></dt><dd><p>When not using random sampling, terminate the evolution if threshold is met.
+When using random sampling, fitnessThreshold has no effect.</p>
 </dd>
-<dt><strong>populationSize: int</strong></dt><dd><p>Size of population</p>
+<dt><strong>populationSize: integer, optional, (default=1000)</strong></dt><dd><p>Size of population</p>
 </dd>
-<dt><strong>showGenerationStat: boolean</strong></dt><dd><p>If True, print out statistic in each generation</p>
+<dt><strong>showGenerationStat: boolean, optional, (default=True)</strong></dt><dd><p>If True, print out statistic in each generation</p>
 </dd>
-<dt><strong>isRandomSampling: Boolean</strong></dt><dd><p>Train the genetic algorithm on random sampled dataset (without replacement)</p>
+<dt><strong>isRandomSampling: Boolean, optional, (default=True)</strong></dt><dd><p>Train the genetic algorithm on random sampled dataset (without replacement)</p>
 </dd>
-<dt><strong>evolutionStrategy: “population” or “steady state”</strong></dt><dd><p>Population: traditional genetic algorithm</p>
-</dd>
-<dt><strong>constInitRange: tuple (start, stop, step)</strong></dt><dd><p>Initiation of the constant set. [start, stop)</p>
+<dt><strong>constInitRange: tuple (start, stop, step), optional, (default=(1,11,1))</strong></dt><dd><p>Initiation of the constant set. range: [start, stop).</p>
 </dd>
 </dl>
 </dd>
@@ -140,16 +130,16 @@ generation.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.fit" title="linear_genetic_programming.lgp_classifier.LGPClassifier.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y)</p></td>
 <td><p>Fit the Genetic Program according to X, y.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.get_params" title="linear_genetic_programming.lgp_classifier.LGPClassifier.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>(self[, deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, X)</p></td>
 <td><p>Predict using the best fit genetic model.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>(self, X, y[, sample_weight])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="linear_genetic_programming.lgp_classifier.LGPClassifier.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(self, X, y[, sample_weight])</p></td>
 <td><p>Return the mean accuracy on the given test data and labels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.set_params" title="linear_genetic_programming.lgp_classifier.LGPClassifier.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(self, \*\*params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 </tbody>
@@ -178,6 +168,27 @@ n_features is the number of features.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.get_params">
+<code class="sig-name descname">get_params</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">deep=True</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>deep</strong><span class="classifier">bool, default=True</span></dt><dd><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>params</strong><span class="classifier">mapping of string to any</span></dt><dd><p>Parameter names mapped to their values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.predict">
 <code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict using the best fit genetic model.</p>
@@ -191,6 +202,57 @@ n_features is the number of features.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>C</strong><span class="classifier">array, shape (n_samples,)</span></dt><dd><p>Returns predicted values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the mean accuracy on the given test data and labels.</p>
+<p>In multi-label classification, this is the subset accuracy
+which is a harsh metric since you require for each sample that
+each label set be correctly predicted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like of shape (n_samples, n_features)</span></dt><dd><p>Test samples.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like of shape (n_samples,) or (n_samples, n_outputs)</span></dt><dd><p>True labels for X.</p>
+</dd>
+<dt><strong>sample_weight</strong><span class="classifier">array-like of shape (n_samples,), default=None</span></dt><dd><p>Sample weights.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>score</strong><span class="classifier">float</span></dt><dd><p>Mean accuracy of self.predict(X) wrt. y.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.set_params">
+<code class="sig-name descname">set_params</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The latter have parameters of the form
+<code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s possible to update each
+component of a nested object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>**params</strong><span class="classifier">dict</span></dt><dd><p>Estimator parameters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">object</span></dt><dd><p>Estimator instance.</p>
 </dd>
 </dl>
 </dd>
