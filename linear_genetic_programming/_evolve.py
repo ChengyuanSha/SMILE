@@ -39,7 +39,8 @@ class Evolve:
                 loser2dx = rand2[i]
         return win1Idx, win2Idx, loser1dx, loser2dx
 
-    def displayHeader(self):
+    @staticmethod
+    def displayHeader():
         print("{:^3}|{:^9}|{:^6}|{:^7}|{:^12}|{:^10}|{:^13}".format("Gen", "Best Indv", "CE", "Pop Avg", "Ran Sampling", "AvgProgLen", "AvgEffProgLen"))
         print('-' * 3 + ' ' + '-' * 9 + ' ' + '-' * 6 + ' ' + '-' * 7 + ' ' + '-' * 12 + ' ' + '-' * 10 + ' ' + '-' * 13)
 
@@ -57,7 +58,7 @@ class Evolve:
         '''
         samplingSize = -1
         if showGenerationStat:
-            self.displayHeader()
+            Evolve.displayHeader()
         self.p.evaluatePopulation(numberOfVariable, register, X_train, y_train)
         bestIndividual = self.p.getBestIndividual()
 

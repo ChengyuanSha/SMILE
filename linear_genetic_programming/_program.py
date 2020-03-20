@@ -92,7 +92,8 @@ class Program:
                 i += 1
         return registerCopy[0]
 
-    def sigmoid(self, x):
+    @staticmethod
+    def sigmoid(x):
         # Numerically stable sigmoid function.
         if x >= 0:
             z = np.exp(-x)
@@ -134,7 +135,7 @@ class Program:
         exonProgram = exonProgram.eliminateStrcIntron()
         self.effProgLen = len(exonProgram.seq)
         result = exonProgram.execute(numberOfVariable, register, singleX)
-        pred = self.sigmoid(result)
+        pred = Program.sigmoid(result)
         if returnType == 'class':
             if pred <= 0.5:  # class 0
                 return classes[0]
