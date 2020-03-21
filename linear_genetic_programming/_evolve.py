@@ -5,6 +5,12 @@ import copy
 
 
 class Evolve:
+    '''
+    A population of diverse candidate prediction models evolve to improve prediction
+    accuracy gradually through a number of generations. After evolution halts, the best
+    model of the population in the final generation will be the output.
+    '''
+
     # np.random.seed(0)
 
     def __init__(self, tournamentSize, maxGeneration, population):
@@ -14,7 +20,15 @@ class Evolve:
 
     def twoTournamentSelectionReturnIndex(self):
         '''
-        :return:  winner1 index, winner2 index, loser1 index, loser2 index
+        Perform two tournament selection without replacement.
+
+        Returns
+        -------
+        winner1 index
+        winner2 index
+        loser1 index
+        loser2 index
+
         '''
         if self.tournamentSize*2 > len(self.p.population):
             raise ValueError("2 * Tournament size cannot be larger than population")

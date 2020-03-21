@@ -6,7 +6,12 @@ from sklearn.utils.multiclass import unique_labels
 
 class Program:
     '''
-    A list of instructions
+    A Program is a collection of instructions. An effective program means all Instruction
+    play a role in the return value. The return value goes through a sigmoid function to
+    predict class
+
+    Parameters
+    ----------
 
     Attributes
     ----------
@@ -18,6 +23,7 @@ class Program:
         set after evaluate function, number of misclassified samples
     effProgLen: int
         set after evaluate function, store effective program length
+
     '''
     OP_ADD = 0
     OP_SUBTRACT = 1
@@ -27,8 +33,6 @@ class Program:
 
     def __init__(self):
         self.seq = []
-        # self.fitness = -1
-        # self.classificationError = -1
 
     def makeRandomeProg(self, numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, length, pConst):
         self.seq = [Instruction(numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, pConst, 0.5) for _
@@ -129,6 +133,7 @@ class Program:
             return class 0 or class 1 based on the sigmoid function if returntype == 'class'
         P: float
             return probability if returntype == 'prob'
+
         '''
         self.progLen = len(self.seq)
         exonProgram = copy.deepcopy(self)

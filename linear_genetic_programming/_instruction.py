@@ -1,11 +1,35 @@
 import numpy as np
 
 
-# operIndex: random index numberOfOperation
-# returnRegIndex: random index numberOfVariable
 class Instruction:
-    # np.random.seed(0)
 
+    '''
+    Instruction is the lowest level in classification model. It contains a return register,
+    an operation and two calculation registers. For example, "r[0] = r[2] + 0.5", r[0] is
+    a return register, r[2] and 0.5 are calculation registers. '+' is operation.
+
+    Parameters
+    ----------
+    numberOfOperation
+    numberOfVariable
+    numberOfInput
+    numberOfConstant
+    pConst, pBranch
+
+    Attributes
+    ----------
+    isBranch
+    branchType
+    operIndex
+        calculated using random number in len(numberOfOperation)
+    returnRegIndex
+        calculated using random number in len(numberOfVariable)
+    reg1Index
+    reg2Index
+
+    '''
+
+    # np.random.seed(0)
     OP_ADD = 0
     OP_SUBTRACT = 1
     OP_MULTIPLY = 2

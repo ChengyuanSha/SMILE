@@ -4,7 +4,15 @@ import numpy as np
 
 class Population:
     '''
-    Population is a list of programs
+    Population contains many programs, where each one is independent.
+
+    Parameters
+    ----------
+
+    Attributes
+    ----------
+    population
+
     '''
 
     def __init__(self):
