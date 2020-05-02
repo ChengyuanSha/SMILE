@@ -2,6 +2,7 @@ from linear_genetic_programming._evolve import Evolve
 from linear_genetic_programming._population import Population
 import numpy as np
 import copy
+import pickle
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
@@ -270,6 +271,46 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                 y_pred[i, 0] = 1 - sigmoid_pred
                 y_pred[i, 1] = sigmoid_pred
         return y_pred
+
+    def save_model(self, fname='lgp.pkl'):
+        '''
+        save the current object into a pickle file
+
+        Parameters
+        ----------
+        fname: string (default = 'lgp.pkl')
+            file name of the output
+
+        Returns
+        -------
+        True:
+            if successfully saved
+
+        '''
+        with open(fname, 'wb') as output:
+            pickle.dump(self, output, pickle.HIGHEST_PROTOCOL)
+        return True
+
+    @classmethod
+    def load_model(cls, fname='lgp.pkl'):
+        '''
+        load lgp object from a pickle file
+
+        Parameters
+        ----------
+        fname: string (default = 'lgp.pkl')
+            file name of the output
+
+        Returns
+        -------
+        lgp: LGPClassifier
+            the lgp object read
+        '''
+        with open(fname, 'rb') as input:
+            lgp = pickle.load(input)
+        return lgp
+
+
 
     def _more_tags(self):
         return {'binary_only': True}
