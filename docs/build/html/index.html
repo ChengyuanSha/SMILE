@@ -146,7 +146,7 @@ Set to False to save time. Some average statistical calculations is time consumi
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>([fname])</p></td>
-<td><p>load lgp object from a pickle file</p></td>
+<td><p>load lgp object from a pickle file.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, X)</p></td>
 <td><p>Predict using the best fit genetic model.</p></td>
@@ -154,8 +154,8 @@ Set to False to save time. Some average statistical calculations is time consumi
 <tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_proba</span></code></a>(self, X)</p></td>
 <td><p>Probability estimates.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.save_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.save_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_model</span></code></a>(self[, fname])</p></td>
-<td><p>save the current object into a pickle file</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.save_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.save_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_model</span></code></a>(self[, fname, mode])</p></td>
+<td><p>Save the current object into a pickle file.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="linear_genetic_programming.lgp_classifier.LGPClassifier.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(self, X, y[, sample_weight])</p></td>
 <td><p>Return the mean accuracy on the given test data and labels.</p></td>
@@ -212,7 +212,8 @@ contained subobjects that are estimators.</p>
 <dl class="method">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model">
 <em class="property">classmethod </em><code class="sig-name descname">load_model</code><span class="sig-paren">(</span><em class="sig-param">fname='lgp.pkl'</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>load lgp object from a pickle file</p>
+<dd><p>load lgp object from a pickle file. Assuming the file is in the
+same directory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -222,7 +223,7 @@ contained subobjects that are estimators.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>lgp: LGPClassifier</dt><dd><p>the lgp object read</p>
+<dt>lgp: LGPClassifier generator</dt><dd><p>generator</p>
 </dd>
 </dl>
 </dd>
@@ -275,8 +276,9 @@ where classes are ordered as they are in <code class="docutils literal notransla
 
 <dl class="method">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.save_model">
-<code class="sig-name descname">save_model</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">fname='lgp.pkl'</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.save_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>save the current object into a pickle file</p>
+<code class="sig-name descname">save_model</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">fname='lgp.pkl'</em>, <em class="sig-param">mode='ab'</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.save_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current object into a pickle file. Assuming the file is in the
+same directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">

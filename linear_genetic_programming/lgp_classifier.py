@@ -272,9 +272,10 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                 y_pred[i, 1] = sigmoid_pred
         return y_pred
 
-    def save_model(self, fname='lgp.pkl'):
+    def save_model(self, fname='lgp.pkl', mode='ab'):
         '''
-        save the current object into a pickle file
+        Save the current object into a pickle file. Assuming the file is in the
+        same directory.
 
         Parameters
         ----------
@@ -287,14 +288,15 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             if successfully saved
 
         '''
-        with open(fname, 'wb') as output:
+        with open(fname, mode) as output:
             pickle.dump(self, output, pickle.HIGHEST_PROTOCOL)
         return True
 
     @classmethod
     def load_model(cls, fname='lgp.pkl'):
         '''
-        load lgp object from a pickle file
+        load lgp object from a pickle file. Assuming the file is in the
+        same directory
 
         Parameters
         ----------
@@ -303,12 +305,18 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
 
         Returns
         -------
-        lgp: LGPClassifier
-            the lgp object read
+        lgp: LGPClassifier generator
+            generator
         '''
-        with open(fname, 'rb') as input:
-            lgp = pickle.load(input)
-        return lgp
+        # with open(fname, 'rb') as input:
+        #     lgp = pickle.load(input)
+        # return lgp
+        with open(fname, "rb") as input:
+            while True:
+                try:
+                    yield pickle.load(input)
+                except EOFError:
+                    break
 
 
 
