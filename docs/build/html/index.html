@@ -54,7 +54,7 @@ It retains the familiar scikit-learn <cite>fit/predict</cite> API and works with
 <span id="lgp-api"></span><h2>LGP API<a class="headerlink" href="#module-linear_genetic_programming.lgp_classifier" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier">
-<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em>, <em class="sig-param">randomState=None</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Genetic Programming algorithm with scikit learn inspired API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -113,6 +113,8 @@ Set to False to save time. Some average statistical calculations is time consumi
 </dd>
 <dt><strong>constInitRange: tuple (start, stop, step), optional, (default=(1,11,1))</strong></dt><dd><p>Initiation of the constant set. range: [start, stop).</p>
 </dd>
+<dt><strong>randomState: int, default=None</strong></dt><dd><p>Controls both the randomness of the algorithm.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Attributes</dt>
@@ -120,6 +122,8 @@ Set to False to save time. Some average statistical calculations is time consumi
 <dt><strong>register_: array of shape (numberOfInput + numberOfVariable + numberOfConstant, )</strong></dt><dd><p>Register stores the calculation variables, feature values and constants.</p>
 </dd>
 <dt><strong>bestProg_: class Program</strong></dt><dd><p>A list of Instructions used for classification calculation</p>
+</dd>
+<dt><strong>bestEffProg_:</strong></dt><dd><p>Best program with struct intron and semantic intron removed</p>
 </dd>
 <dt><strong>bestProFitness_</strong><span class="classifier">float</span></dt><dd><p>Training set accuracy score of the best program</p>
 </dd>
@@ -145,7 +149,7 @@ Set to False to save time. Some average statistical calculations is time consumi
 <tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.get_params" title="linear_genetic_programming.lgp_classifier.LGPClassifier.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>(self[, deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>([fname])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>([fname, mode])</p></td>
 <td><p>load lgp object from a pickle file.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, X)</p></td>
@@ -211,7 +215,7 @@ contained subobjects that are estimators.</p>
 
 <dl class="method">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model">
-<em class="property">classmethod </em><code class="sig-name descname">load_model</code><span class="sig-paren">(</span><em class="sig-param">fname='lgp.pkl'</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">load_model</code><span class="sig-paren">(</span><em class="sig-param">fname='lgp.pkl'</em>, <em class="sig-param">mode='rb'</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>load lgp object from a pickle file. Assuming the file is in the
 same directory</p>
 <dl class="field-list simple">

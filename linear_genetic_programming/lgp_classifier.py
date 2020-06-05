@@ -7,6 +7,8 @@ import pickle
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 from sklearn.utils.multiclass import unique_labels
+from sklearn.metrics import accuracy_score
+
 
 class LGPClassifier(BaseEstimator, ClassifierMixin):
     '''
@@ -89,6 +91,9 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     constInitRange: tuple (start, stop, step), optional, (default=(1,11,1))
         Initiation of the constant set. range: [start, stop).
 
+    randomState: int, default=None
+        Controls both the randomness of the algorithm.
+
     Attributes
     ----------
     register_: array of shape (numberOfInput + numberOfVariable + numberOfConstant, )
@@ -96,6 +101,9 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
 
     bestProg_: class Program
         A list of Instructions used for classification calculation
+
+    bestEffProg_:
+        Best program with struct intron and semantic intron removed
 
     bestProFitness_ : float
         Training set accuracy score of the best program
@@ -112,26 +120,27 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
 
     def __init__(self,
                  numberOfInput,
-                 numberOfOperation = 5,
-                 numberOfVariable = 4,
-                 numberOfConstant = 9,
-                 max_prog_ini_length = 30,
-                 min_prog_ini_length = 10,
-                 maxProgLength = 300,
-                 minProgLength = 10,
-                 pCrossover = 0.75,
-                 pConst = 0.5,
-                 pInsert = 0.5,
-                 pRegmut = 0.6,
-                 pMacro = 0.75,
-                 pMicro = 0.5,
-                 tournamentSize = 2,
-                 maxGeneration = 200,
-                 fitnessThreshold = 1.0,
-                 populationSize = 1000,
-                 showGenerationStat = True,
-                 isRandomSampling = True,
-                 constInitRange = (1, 11, 1) ):
+                 numberOfOperation=5,
+                 numberOfVariable=4,
+                 numberOfConstant=9,
+                 max_prog_ini_length=30,
+                 min_prog_ini_length=10,
+                 maxProgLength=300,
+                 minProgLength=10,
+                 pCrossover=0.75,
+                 pConst=0.5,
+                 pInsert=0.5,
+                 pRegmut=0.6,
+                 pMacro=0.75,
+                 pMicro=0.5,
+                 tournamentSize=2,
+                 maxGeneration=200,
+                 fitnessThreshold=1.0,
+                 populationSize=1000,
+                 showGenerationStat=True,
+                 isRandomSampling=True,
+                 constInitRange=(1, 11, 1),
+                 randomState = None):
         self.numberOfInput = numberOfInput
         self.numberOfOperation = numberOfOperation
         self.numberOfVariable = numberOfVariable
@@ -153,6 +162,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.showGenerationStat = showGenerationStat
         self.isRandomSampling = isRandomSampling
         self.constInitRange = constInitRange
+        self.randomState = randomState
 
     def __generateRegister(self):
         # Initialization of register
@@ -160,12 +170,13 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         register_length = self.numberOfInput + self.numberOfVariable + self.numberOfConstant
         register = np.zeros(register_length, dtype=float)
         for i in range(self.numberOfVariable + self.numberOfInput):
-            register[i] = 2 * np.random.random_sample() - 1 # random float [-1, 1)
+            register[i] = 2 * np.random.random_sample() - 1  # random float [-1, 1)
         # initialize constant
         j = self.numberOfVariable + self.numberOfInput
         while j < register_length:
             register[j] = np.around(np.random.choice(np.arange(self.constInitRange[0],
-                                self.constInitRange[1], self.constInitRange[2])), 2) #j - self.numberOfVariable + self.numberOfInput + 1
+                                                               self.constInitRange[1], self.constInitRange[2])),
+                                    2)  # j - self.numberOfVariable + self.numberOfInput + 1
             j += 1
         self.register_ = register
 
@@ -192,6 +203,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.classes_ = unique_labels(y)
         if len(self.classes_) == 1:
             raise ValueError("y is unbalanced, only have one class")
+        if self.randomState is not None:
+            np.random.seed(self.randomState)
 
         self.__generateRegister()
         # generate random population
@@ -208,6 +221,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.bestProgStr_ = bestProg.toString(self.numberOfVariable, self.numberOfInput, self.register_)
         effProg = copy.deepcopy(bestProg)
         effProg = effProg.eliminateStrcIntron()
+        effProg = self.__remove_semantic_intron(X, y, effProg)
+        self.bestEffProg_ = effProg
         self.bestEffProgStr_ = effProg.toString(self.numberOfVariable, self.numberOfInput, self.register_)
         self.bestProg_ = bestProg
         self.bestProFitness_ = round(bestProg.fitness, 4)
@@ -293,7 +308,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         return True
 
     @classmethod
-    def load_model(cls, fname='lgp.pkl'):
+    def load_model(cls, fname='lgp.pkl', mode="rb"):
         '''
         load lgp object from a pickle file. Assuming the file is in the
         same directory
@@ -308,18 +323,41 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         lgp: LGPClassifier generator
             generator
         '''
-        # with open(fname, 'rb') as input:
-        #     lgp = pickle.load(input)
-        # return lgp
-        with open(fname, "rb") as input:
+        with open(fname, mode) as input:
             while True:
                 try:
-                    yield pickle.load(input)
+                    yield pickle.load(input, encoding='bytes')
                 except EOFError:
                     break
 
+    # semantic intron does not alter the value stored in r0
+    # Algorithm 3.1 detection of structural introns from LGP book
+    def __remove_semantic_intron(self, X, y, Prog):
+        remove_index = []
+        p = copy.deepcopy(Prog)
+        for delete_index, item in enumerate(p.seq):  # try to delete one instruction a time
+            y_pred1 = np.zeros(X.shape[0], dtype=self.classes_[0].dtype)
+            for i, row in enumerate(X):
+                y_pred1[i] = p.predictProbaSigmoid(self.numberOfVariable, self.register_, row,
+                                                               self.classes_)
+            result1_acc = accuracy_score(y, y_pred1)
 
+            p2 = copy.deepcopy(p)
+            del p2.seq[delete_index]  # try to delete instruction
+            y_pred2 = np.zeros(X.shape[0], dtype=self.classes_[0].dtype)
+            for i, row in enumerate(X):
+                y_pred2[i] = p2.predictProbaSigmoid(self.numberOfVariable, self.register_, row,
+                                                               self.classes_)
+            result2_acc = accuracy_score(y, y_pred2)
+
+            if np.array_equal(y_pred1, y_pred2) and result1_acc == result2_acc:  # result is the same
+                remove_index.append(delete_index)
+        for index in sorted(remove_index, reverse=True):
+            del p.seq[index]
+        return p
+
+    def __str__(self):
+        return ""
 
     def _more_tags(self):
         return {'binary_only': True}
-
