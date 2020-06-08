@@ -245,7 +245,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             Returns predicted values.
         """
         X = check_array(X)
-        check_is_fitted(self)
+        #check_is_fitted(self)
         classType = self.classes_[0].dtype
         n_samples = X.shape[0]
         y_pred = np.zeros(n_samples, dtype=classType)
@@ -271,7 +271,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
            Returns the probability of the sample for each class in the model,
            where classes are ordered as they are in ``self.classes_``.
         """
-        check_is_fitted(self)
+        #check_is_fitted(self)
 
         n_samples = X.shape[0]
         # only support binary classification
@@ -356,8 +356,6 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             del p.seq[index]
         return p
 
-    def __str__(self):
-        return ""
 
     def _more_tags(self):
         return {'binary_only': True}
