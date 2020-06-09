@@ -9,3 +9,4 @@ dash==1.12.0
 dash-renderer==1.4.1
 dash-html-components==1.0.3
 dash-core-components==1.10.0
+gunicorn==20.0.4
