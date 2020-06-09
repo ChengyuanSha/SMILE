@@ -14,7 +14,7 @@ This algorithm is computationally expensive, it need to run in computer clusters
 
 |
 
-Document: `here1 <http://linear-genetic-programming.rtfd.io/>`_
+Documentation: `here1 <http://linear-genetic-programming.rtfd.io/>`_
 
 Result Visualization Website: `here2 <https://lgp-result.herokuapp.com/>`_
 
