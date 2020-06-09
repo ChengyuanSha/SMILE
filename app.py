@@ -10,6 +10,8 @@ app = dash.Dash(
     meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 )
 
+app.title = 'LGP'
+
 # setting up get result class
 result = ResultProcessing("dataset/RuiJin_Processed.csv", "dataset/lgp_filtered.pkl")
 result.load_models()
@@ -28,7 +30,7 @@ styles = {
 }
 
 # need to suppress bc using dynamic tabs
-app.config['suppress_callback_exceptions']=True
+app.config['suppress_callback_exceptions'] = True
 
 app.layout = html.Div(
     [
@@ -91,11 +93,11 @@ app.layout = html.Div(
 
         html.Div(id='tabs-content')
 
-
     ],
-    id = "mainContainer",
-    style = {"display": "flex", "flex-direction": "column"}
+    id="mainContainer",
+    style={"display": "flex", "flex-direction": "column"}
 )
+
 
 @app.callback(Output('tabs-content', 'children'),
               [Input('tabs', 'value')])
@@ -107,11 +109,12 @@ def render_content(tab):
             html.H3('TODO')
         ])
 
+
 def overview():
     return html.Div([
 
         get_prog_len_slider(),
-        # first row in website
+        # 1 row 2 graphs in website
         html.Div([
             html.Div([
                 dcc.Graph(
@@ -130,11 +133,33 @@ def overview():
                 id="right-column",
                 className="pretty_container six columns",
             ),
-            ],
+        ],
             className="row flex-display",
         ),
 
-        # second row in website
+        # 2 row Two Feature Co-occurrence in website
+        html.Div([
+            html.Div([
+                html.Div(
+                    html.H6('Two Feature Co-occurrence Analysis')
+                ),
+
+                html.Div(
+                    dcc.Graph(
+                        id='co-occurrence-graph'
+                    )
+                )
+
+            ],
+                className="pretty_container eleven columns"
+            )
+
+        ],
+            className="row flex-display",
+            style={'align-items': 'center', 'justify-content': 'center'},
+        ),
+
+        # 3 row selectors in website
         html.Div([
             html.Div([
                 html.Div(
@@ -152,7 +177,7 @@ def overview():
                         value='Linear',
                         labelStyle={'display': 'inline-block'}
                     )
-                    ], style={'width': '49%', 'display': 'inline-block'},
+                ], style={'width': '49%', 'display': 'inline-block'},
 
                 ),
 
@@ -168,16 +193,16 @@ def overview():
                         value='Linear',
                         labelStyle={'display': 'inline-block'}
                     )
-                    ], style={'width': '49%', 'float': 'right', 'display': 'inline-block'},
+                ], style={'width': '49%', 'float': 'right', 'display': 'inline-block'},
                 )
             ],
                 className="pretty_container twelve columns"
             ),
-            ],
+        ],
             className="row flex-display"
         ),
 
-        # third row in the website
+        # 4 row Two Feature Comparision in the website
         html.Div([
             # 2 feature scatter plot, update based on x, y filter, see the callback
             html.Div([
@@ -185,7 +210,7 @@ def overview():
                     id='crossfilter-indicator-scatter',
                     # hoverData={'points': [{'customdata': 'Japan'}]}
                 )
-                ],
+            ],
                 className="pretty_container six columns",
             ),
             # display program info on the right
@@ -196,11 +221,11 @@ def overview():
                                 Click on points in the graph.
                             """),
                 html.Pre(id='click-data', style=styles['pre']),
-                ],
+            ],
                 className="pretty_container six columns",
             ),
 
-            ],
+        ],
             className="row flex-display",
         ),
 
@@ -210,24 +235,24 @@ def overview():
 def get_prog_len_slider():
     result.calculate_featureList_and_calcvariableList()
     length_list = sorted(list(set([len(i) for i in result.feature_list])))
-    return  html.Div([
+    return html.Div([
 
-                html.Div([
-                    html.H6('Choose Program Length'),
+        html.Div([
+            html.H6('Choose Program Length'),
 
-                    dcc.Slider(
-                    id='proglenfilter-slider',
-                    min=length_list[0],
-                    max=length_list[-1],
-                    value=len(length_list),
-                    marks={str(each_len): str(each_len) for each_len in length_list},
-                    step=None
-                    )
+            dcc.Slider(
+                id='proglenfilter-slider',
+                min=length_list[0],
+                max=length_list[-1],
+                value=len(length_list),
+                marks={str(each_len): str(each_len) for each_len in length_list},
+                step=None
+            )
 
-                    ],
-                    className="pretty_container ten columns",
-                ),
         ],
+            className="pretty_container ten columns",
+        ),
+    ],
         style={'align-items': 'center', 'justify-content': 'center'},
         className="row flex-display",
     )
@@ -237,35 +262,59 @@ def get_prog_len_slider():
     dash.dependencies.Output('sliderfilter-accuracy-scatter', 'figure'),
     [dash.dependencies.Input('proglenfilter-slider', 'value')])
 def update_accuracy_graph(pro_len):
-    prog_index, acc_scores =  result.get_accuracy_given_length(pro_len)
+    prog_index, acc_scores = result.get_accuracy_given_length(pro_len)
     prog_index = ['m' + str(i) for i in prog_index]
-    return  {
-                'data': [
-                    {'x': prog_index, 'y': acc_scores, 'type': 'bar'}
-                ],
-                'layout': {
-                    'title': 'Accuracy of Len ' + str(pro_len) + ' Models',
-                    'xaxis': { 'title': 'model index' },
-                    'yaxis': { 'title': 'accuracy' },
-                },
-            }
+    return {
+        'data': [
+            {'x': prog_index, 'y': acc_scores, 'type': 'bar'}
+        ],
+        'layout': {
+            'title': 'Accuracy of ' + str(pro_len) + ' Feature Models',
+            'xaxis': {'title': 'model index'},
+            'yaxis': {'title': 'accuracy'},
+        },
+    }
+
 
 @app.callback(
     dash.dependencies.Output('sliderfilter-occurrences-scatter', 'figure'),
     [dash.dependencies.Input('proglenfilter-slider', 'value')])
 def update_occurrence_graph(pro_len):
     features, num_of_occurrences = result.get_occurrence_from_feature_list_given_length(pro_len)
-    features = [ 'f' + str(i) for i in features]
-    return  {
-                'data': [
-                    {'x': features, 'y': num_of_occurrences, 'type': 'bar'}
-                ],
-                'layout': {
-                    'title': 'Occurrences of Features of Len ' + str(pro_len) + ' Models',
-                    'xaxis': { 'title': 'Program feature index' },
-                    'yaxis': { 'title': 'Num of occurrences' },
-                },
+    features = ['f' + str(i) for i in features]
+    return {
+        'data': [
+            {'x': features, 'y': num_of_occurrences, 'type': 'bar'}
+        ],
+        'layout': {
+            'title': 'Occurrences of Features of ' + str(pro_len) + ' Feature Models',
+            'xaxis': {'title': 'Program feature index'},
+            'yaxis': {'title': 'Num of occurrences'},
+        },
+    }
+
+
+@app.callback(
+    dash.dependencies.Output('co-occurrence-graph', 'figure'),
+    [dash.dependencies.Input('proglenfilter-slider', 'value')])
+def update_accuracy_graph(pro_len):
+    if pro_len > 1:
+        cooc_matrix, feature_index = result.get_feature_co_occurences_matrix(pro_len)
+        feature_index = ['f' + str(i) for i in feature_index]
+        return {
+            'data': [{
+                'z': cooc_matrix,
+                'x': feature_index,
+                'y': feature_index,
+                'type': 'heatmap',
+                'colorscale': 'Viridis'
+            }],
+            'layout': {
+                'title' : 'Co-occurrence of ' + str(pro_len) + ' Feature Models'
             }
+        }
+    return  {}
+
 
 @app.callback(
     dash.dependencies.Output('crossfilter-indicator-scatter', 'figure'),
@@ -277,16 +326,16 @@ def update_feature_comparision_graph(xaxis_column_name, yaxis_column_name):
     type_name = ['AD', 'Normal']
     return {
         'data': [dict(
-                x=X[:,int(xaxis_column_name)][y == type],
-                y=X[:,int(yaxis_column_name)][y == type],
-                mode='markers',
-                marker={
-                    'size': 15,
-                    'opacity': 0.5,
-                    'line': {'width': 0.5, 'color': 'white'},
-                    },
-                name = type_name[type]
-                ) for type in [0, 1]
+            x=X[:, int(xaxis_column_name)][y == type],
+            y=X[:, int(yaxis_column_name)][y == type],
+            mode='markers',
+            marker={
+                'size': 15,
+                'opacity': 0.5,
+                'line': {'width': 0.5, 'color': 'white'},
+            },
+            name=type_name[type]
+        ) for type in [0, 1]
         ],
         'layout': dict(
             xaxis={
@@ -298,10 +347,11 @@ def update_feature_comparision_graph(xaxis_column_name, yaxis_column_name):
                 'type': 'linear'
             },
             hovermode='closest',
-            clickmode = 'event+select',
+            clickmode='event+select',
             title='Two Feature Comparision'
         )
     }
+
 
 @app.callback(
     Output('click-data', 'children'),
@@ -310,6 +360,7 @@ def display_click_data(clickData):
     if clickData is not None:
         i = int(clickData['points'][0]['pointIndex'])
         return result.model_list[i].bestEffProgStr_
+
 
 # Running server
 if __name__ == "__main__":
