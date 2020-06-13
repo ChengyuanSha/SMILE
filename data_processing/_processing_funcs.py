@@ -22,9 +22,8 @@ class ResultProcessing:
         numpy array
     calculation_variable_list
     '''
-    def __init__(self, original_data_file_path, pickle_file_path):
+    def __init__(self, original_data_file_path):
         self.original_data_file_path = original_data_file_path
-        self.pickle_file_path = pickle_file_path
         self.X, self.y, self.names = self.readDataRuiJinAD()
 
     def get_original_dataframe(self):
@@ -56,10 +55,15 @@ class ResultProcessing:
         X = scaler.fit_transform(X)
         return X, y, names
 
-    # load and filter models, this function is too slow!!! need to fix!!!
-    def load_models(self):
-        lgp_models = LGPClassifier.load_model(self.pickle_file_path)
-        model_list = [i for i in lgp_models][0]
+    # load models
+    def load_models_from_file_path(self, pickle_file_path):
+        lgp_models = LGPClassifier.load_model(pickle_file_path)
+        model_list = [i for i in lgp_models]
+        self.model_list = model_list
+
+    def load_models_directly(self, input):
+        lgp_models = LGPClassifier.load_model_directly(input)
+        model_list = [i for i in lgp_models]
         self.model_list = model_list
 
     # return feature list and calculation variable list
@@ -138,7 +142,7 @@ class ResultProcessing:
 if __name__ == '__main__':
     # some small testing code
     result = ResultProcessing("../dataset/RuiJin_Processed.csv", "../dataset/lgp_filtered.pkl")
-    result.load_models()
+    result.load_models_from_file_path()
     X, y, names = result.readDataRuiJinAD()
     result.calculate_featureList_and_calcvariableList()
     # prog_index, acc_scores =  result.get_accuracy_given_length(1)

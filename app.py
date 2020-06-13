@@ -1,8 +1,11 @@
 import dash
 import numpy as np
+import base64
+import datetime
+import io
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from data_processing._processing_funcs import ResultProcessing
 
 app = dash.Dash(
@@ -12,12 +15,18 @@ app = dash.Dash(
 
 app.title = 'LGP'
 
-# setting up get result class
-result = ResultProcessing("dataset/RuiJin_Processed.csv", "dataset/lgp_filtered.pkl")
-result.load_models()
-X, y, names = result.X, result.y, result.names
-index_list = [i for i in range(len(names))]
-available_indicators = list(zip(index_list, names))
+# setting up get global_result class
+# global_result = ResultProcessing("dataset/RuiJin_Processed.csv", "dataset/lgp_filtered.pkl")
+# global_result.load_models()
+# X, y, names = global_result.X, global_result.y, global_result.names
+# index_list = [i for i in range(len(names))]
+# available_indicators = list(zip(index_list, names))
+
+global_result = ResultProcessing("dataset/RuiJin_Processed.csv")
+X, y, names = 0, 0, 0
+index_list = 0
+available_indicators = 0
+file_uploaded = False
 
 server = app.server
 
@@ -62,7 +71,7 @@ app.layout = html.Div(
                                     style={"margin-bottom": "0px"},
                                 ),
                                 html.H5(
-                                    "Result Visualization", style={"margin-top": "0px"}
+                                    "global_result Visualization", style={"margin-top": "0px"}
                                 ),
                             ]
                         )
@@ -86,10 +95,25 @@ app.layout = html.Div(
             style={"margin-bottom": "25px"},
         ),
 
-        dcc.Tabs(id="tabs", value='tab-1', children=[
-            dcc.Tab(label='Overview', value='tab-1'),
-            dcc.Tab(label='Length Specific Graph', value='tab-2'),
-        ]),
+        # File upload
+        html.Div([
+
+            dcc.Upload(
+                id='upload-data',
+                children=html.Div([
+                    html.H6('Upload pickle global_result file here'),
+                    'Drag and Drop or ',
+                    html.A('Select Files')
+                ]),
+                className="pretty_container six columns",
+                # Allow multiple files to be uploaded
+                multiple=True
+            ),
+            html.Div(id='output-data-upload',
+                     ),
+            ],
+
+        ),
 
         html.Div(id='tabs-content')
 
@@ -99,21 +123,10 @@ app.layout = html.Div(
 )
 
 
-@app.callback(Output('tabs-content', 'children'),
-              [Input('tabs', 'value')])
-def render_content(tab):
-    if tab == 'tab-1':
-        return overview()
-    elif tab == 'tab-2':
-        return html.Div([
-            html.H3('TODO')
-        ])
-
-
-def overview():
+def render_main_visualization_layout():
     return html.Div([
 
-        get_prog_len_slider(),
+        render_prog_len_slider(),
         # 1 row 2 graphs in website
         html.Div([
             html.Div([
@@ -133,7 +146,7 @@ def overview():
                 id="right-column",
                 className="pretty_container six columns",
             ),
-        ],
+            ],
             className="row flex-display",
         ),
 
@@ -232,13 +245,13 @@ def overview():
     ])
 
 
-def get_prog_len_slider():
-    result.calculate_featureList_and_calcvariableList()
-    length_list = sorted(list(set([len(i) for i in result.feature_list])))
+def render_prog_len_slider():
+    global_result.calculate_featureList_and_calcvariableList()
+    length_list = sorted(list(set([len(i) for i in global_result.feature_list])))
     return html.Div([
 
         html.Div([
-            html.H6('Choose Program Length'),
+                html.H6('Choose Length of Feature in a Program'),
 
             dcc.Slider(
                 id='proglenfilter-slider',
@@ -262,7 +275,7 @@ def get_prog_len_slider():
     dash.dependencies.Output('sliderfilter-accuracy-scatter', 'figure'),
     [dash.dependencies.Input('proglenfilter-slider', 'value')])
 def update_accuracy_graph(pro_len):
-    prog_index, acc_scores = result.get_accuracy_given_length(pro_len)
+    prog_index, acc_scores = global_result.get_accuracy_given_length(pro_len)
     prog_index = ['m' + str(i) for i in prog_index]
     return {
         'data': [
@@ -280,7 +293,7 @@ def update_accuracy_graph(pro_len):
     dash.dependencies.Output('sliderfilter-occurrences-scatter', 'figure'),
     [dash.dependencies.Input('proglenfilter-slider', 'value')])
 def update_occurrence_graph(pro_len):
-    features, num_of_occurrences = result.get_occurrence_from_feature_list_given_length(pro_len)
+    features, num_of_occurrences = global_result.get_occurrence_from_feature_list_given_length(pro_len)
     features = ['f' + str(i) for i in features]
     return {
         'data': [
@@ -299,7 +312,7 @@ def update_occurrence_graph(pro_len):
     [dash.dependencies.Input('proglenfilter-slider', 'value')])
 def update_accuracy_graph(pro_len):
     if pro_len > 1:
-        cooc_matrix, feature_index = result.get_feature_co_occurences_matrix(pro_len)
+        cooc_matrix, feature_index = global_result.get_feature_co_occurences_matrix(pro_len)
         feature_index = ['f' + str(i) for i in feature_index]
         return {
             'data': [{
@@ -359,7 +372,52 @@ def update_feature_comparision_graph(xaxis_column_name, yaxis_column_name):
 def display_click_data(clickData):
     if clickData is not None:
         i = int(clickData['points'][0]['pointIndex'])
-        return result.model_list[i].bestEffProgStr_
+        return global_result.model_list[i].bestEffProgStr_
+
+
+def parse_contents(contents, filename, date):
+    content_type, content_string = contents.split(',')
+
+    decoded = base64.b64decode(content_string)
+    try:
+        if 'pkl' in filename:
+
+            global global_result, X, y, names, index_list , available_indicators
+            # initialize staff
+            global_result = ResultProcessing("dataset/RuiJin_Processed.csv")
+            global_result.load_models_directly(io.BytesIO(decoded))
+            X, y, names = global_result.X, global_result.y, global_result.names
+            index_list = [i for i in range(len(names))]
+            available_indicators = list(zip(index_list, names))
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing this file.'
+            ],
+        )
+
+    return html.Div([
+        html.H6(filename),
+        html.H6("successfully read")
+        ],
+    )
+
+
+@app.callback([Output('output-data-upload', 'children'),
+               Output('tabs-content', 'children')],
+              [Input('upload-data', 'contents')],
+              [State('upload-data', 'filename'),
+               State('upload-data', 'last_modified')])
+def update_output(list_of_contents, list_of_names, list_of_dates):
+    # display read file status and update main visualization Div
+    if list_of_contents is not None:
+        children = [
+            parse_contents(c, n, d) for c, n, d in
+            zip(list_of_contents, list_of_names, list_of_dates)]
+        return children, render_main_visualization_layout()
+    else:
+        return ' ',' '
+
 
 
 # Running server

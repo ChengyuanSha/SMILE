@@ -116,6 +116,10 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
 
     populationAvg_: float
         Average fitness of the final generation
+
+    testingAccuracy: int
+        used to save testing set accuracy score
+
     '''
 
     def __init__(self,
@@ -140,7 +144,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                  showGenerationStat=True,
                  isRandomSampling=True,
                  constInitRange=(1, 11, 1),
-                 randomState = None):
+                 randomState = None,
+                 testingAccuracy = -1):
         self.numberOfInput = numberOfInput
         self.numberOfOperation = numberOfOperation
         self.numberOfVariable = numberOfVariable
@@ -163,6 +168,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.isRandomSampling = isRandomSampling
         self.constInitRange = constInitRange
         self.randomState = randomState
+        self.testingAccuracy = testingAccuracy
 
     def __generateRegister(self):
         # Initialization of register
@@ -329,6 +335,28 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                     yield pickle.load(input, encoding='bytes')
                 except EOFError:
                     break
+
+    @classmethod
+    def load_model_directly(cls, pickle_file_input):
+        '''
+        Used to read a file in website
+
+        Parameters
+        ----------
+        pickle_file_input: byte stream
+            BytesIO input
+
+        Returns
+        -------
+        lgp: LGPClassifier generator
+            generator
+        '''
+        while True:
+            try:
+                yield pickle.load(pickle_file_input, encoding='bytes')
+            except EOFError:
+                break
+
 
     # semantic intron does not alter the value stored in r0
     # Algorithm 3.1 detection of structural introns from LGP book
