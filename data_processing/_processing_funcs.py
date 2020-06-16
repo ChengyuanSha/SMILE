@@ -11,6 +11,8 @@ from scipy.sparse import csr_matrix
 
 class ResultProcessing:
     '''
+    util class
+
     Attributes
     ----------
     X
@@ -104,9 +106,11 @@ class ResultProcessing:
 
     def get_occurrence_from_feature_list_given_length(self, given_length):
         element = np.asarray([i for i in self.feature_list if len(i) == given_length])
+        if len(element) == 0:
+            raise ValueError("There is no program in this length")
         rank = Counter(element.flatten())
         features, num_of_occurrences = zip(*rank.most_common())
-        return features, num_of_occurrences
+        return features, num_of_occurrences, len(element)
 
     def get_accuracy_given_length(self, given_length):
         prog_index = np.asarray([c for c, i in enumerate(self.feature_list) if len(i) == given_length])
@@ -123,7 +127,7 @@ class ResultProcessing:
         data = np.ones(len(row_ind), dtype='uint32')  # use unsigned int for better memory utilization
         max_word_id = max(itertools.chain(*documents_as_ids)) + 1
         docs_words_matrix = csr_matrix((data, (row_ind, col_ind)), shape=(
-        len(documents_as_ids), max_word_id))  # efficient arithmetic operations with CSR * CSR
+                            len(documents_as_ids), max_word_id))  # efficient arithmetic operations with CSR * CSR
         cooc_matrix = docs_words_matrix.T * docs_words_matrix  # multiplying docs_words_matrix with its transpose matrix would generate the co-occurences matrix
         cooc_matrix.setdiag(0)
         return cooc_matrix, word_to_id
@@ -133,21 +137,65 @@ class ResultProcessing:
         index = np.asarray([c for c, i in enumerate(self.feature_list) if len(i) == given_length])
         # filter feature list
         document = self.feature_list[index]
-        f, _ = self.get_occurrence_from_feature_list_given_length(given_length)
+        f, _, _ = self.get_occurrence_from_feature_list_given_length(given_length)
         feature_index = list(f)
         cooc_matrix, _ = ResultProcessing.__create_co_occurences_matrix(feature_index, document)
         cooc_matrix = cooc_matrix.todense()
         return cooc_matrix, feature_index
 
+    def get_index_of_models_given_feature_and_length(self, feature_num, given_length):
+        return [c for c, i in enumerate(self.feature_list) if len(i) == given_length and feature_num in i]
+
+    def convert_program_str_repr(self, model):
+        # convert the raw string to user friendly string
+        s = ''
+        original_str = model.bestEffProgStr_.splitlines()
+        i = 0
+        indentation = False
+        indentation_level = 1
+        while i < len(original_str):
+            current_string = original_str[i]
+            vars_in_line = re.findall(r'r\d+', current_string)
+            # reformat structure
+            if 'if' not in current_string:
+                extract = [x.strip() for x in current_string.split(',')]
+                current_string = extract[0][:3] + ' '+ extract[1] + ' = ' +  extract[2] + ' ' + extract[0][-1] + ' ' + extract[3][:-1]
+            # substitute variable index
+            for var in vars_in_line:
+                var = var[1:]
+                if int(var) < model.numberOfVariable and int(var) != 0: # calculation variable
+                    current_string = re.sub('r' + re.escape(var), str(round(model.register_[int(var)], 2)),
+                                            current_string)
+                elif int(var) > model.numberOfVariable and int(var) != 0: # features
+                    name_index = int(var) - model.numberOfVariable
+                    current_string = re.sub('r' + re.escape(var), str(self.names[name_index]), current_string)
+            # take care of indentation
+            if indentation:
+                current_string = current_string[:3] + indentation_level*'  ' + 'then ' + current_string[3:]
+            if 'if' in current_string:
+                indentation = True
+                indentation_level += 1
+            else:
+                indentation = False
+            s += current_string + '\n'
+            i += 1
+        s += 'Output register r[0] will then go through sigmoid transformation S \nif S(r[0]) is less or equal ' \
+             'than 0.5:\n  this sample will be classified by this model as class 0, i.e. diseased. \nelse:\n' \
+             '  class 1, i.e. not diseased'
+        print(s)
+        return s
+
 if __name__ == '__main__':
     # some small testing code
-    result = ResultProcessing("../dataset/RuiJin_Processed.csv", "../dataset/lgp_filtered.pkl")
-    result.load_models_from_file_path()
+    result = ResultProcessing("../dataset/RuiJin_Processed.csv")
+    result.load_models_from_file_path("../dataset/lgp_acc.pkl")
     X, y, names = result.readDataRuiJinAD()
     result.calculate_featureList_and_calcvariableList()
     # prog_index, acc_scores =  result.get_accuracy_given_length(1)
-    m, i = result.get_feature_co_occurences_matrix(5)
-    print(m)
-    print(len(i))
-
+    # index = result.get_index_of_models_given_feature_and_length(87, 1)
+    # print(index)
+    # for i in index:
+    #     print(result.model_list[i].bestEffProgStr_)
+    print(result.model_list[899].bestEffProgStr_)
+    result.convert_program_str_repr(result.model_list[20])
 

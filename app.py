@@ -2,6 +2,7 @@ import dash
 import numpy as np
 import base64
 import datetime
+import copy
 import io
 import dash_core_components as dcc
 import dash_html_components as html
@@ -22,21 +23,65 @@ app.title = 'LGP'
 # index_list = [i for i in range(len(names))]
 # available_indicators = list(zip(index_list, names))
 
-global_result = ResultProcessing("dataset/RuiJin_Processed.csv")
+# global variable will cause problems in multi-user web, fix later
+original_result = ResultProcessing("dataset/RuiJin_Processed.csv")
+global_result = 0
 X, y, names = 0, 0, 0
 index_list = 0
 available_indicators = 0
-file_uploaded = False
 
 server = app.server
 
-# style for the text box
-styles = {
-    'pre': {
-        'border': 'thin lightgrey solid',
-        'overflowX': 'scroll'
-    }
-}
+def render_webpage_title():
+    return html.Div(
+        [
+            html.Div(
+                [
+                    html.Img(
+                        src=app.get_asset_url("gene.png"),
+                        id="plotly-image",
+                        style={
+                            "height": "60px",
+                            "width": "auto",
+                            "margin-bottom": "25px",
+                        },
+                    )
+                ],
+                className="one-third column",
+            ),
+            html.Div(
+                [
+                    html.Div(
+                        [
+                            html.H3(
+                                "Linear Genetic Programming",
+                                style={"margin-bottom": "0px"},
+                            ),
+                            html.H5(
+                                "Result Visualization", style={"margin-top": "0px"}
+                            ),
+                        ]
+                    )
+                ],
+                className="one-half column",
+                id="title",
+            ),
+            html.Div(
+                [
+                    html.A(
+                        html.Button("Github", id="learn-more-button"),
+                        href="https://github.com/ChengyuanSha/linear_genetic_programming",
+                    )
+                ],
+                className="one-third column",
+                id="button",
+            ),
+        ],
+        id="header",
+        className="row flex-display",
+        style={"margin-bottom": "25px"},
+    )
+
 
 # need to suppress bc using dynamic tabs
 app.config['suppress_callback_exceptions'] = True
@@ -46,62 +91,15 @@ app.layout = html.Div(
         # --- headline ---
         # empty Div to trigger javascript file for graph resizing
         html.Div(id="output-clientside"),
-        html.Div(
-            [
-                html.Div(
-                    [
-                        html.Img(
-                            src=app.get_asset_url("gene.png"),
-                            id="plotly-image",
-                            style={
-                                "height": "60px",
-                                "width": "auto",
-                                "margin-bottom": "25px",
-                            },
-                        )
-                    ],
-                    className="one-third column",
-                ),
-                html.Div(
-                    [
-                        html.Div(
-                            [
-                                html.H3(
-                                    "Linear Genetic Programming",
-                                    style={"margin-bottom": "0px"},
-                                ),
-                                html.H5(
-                                    "global_result Visualization", style={"margin-top": "0px"}
-                                ),
-                            ]
-                        )
-                    ],
-                    className="one-half column",
-                    id="title",
-                ),
-                html.Div(
-                    [
-                        html.A(
-                            html.Button("Github", id="learn-more-button"),
-                            href="https://github.com/ChengyuanSha/linear_genetic_programming",
-                        )
-                    ],
-                    className="one-third column",
-                    id="button",
-                ),
-            ],
-            id="header",
-            className="row flex-display",
-            style={"margin-bottom": "25px"},
-        ),
-
+        # title
+        render_webpage_title(),
         # File upload
         html.Div([
 
             dcc.Upload(
                 id='upload-data',
                 children=html.Div([
-                    html.H6('Upload pickle global_result file here'),
+                    html.H6('Upload pickle result file here'),
                     'Drag and Drop or ',
                     html.A('Select Files')
                 ]),
@@ -111,11 +109,10 @@ app.layout = html.Div(
             ),
             html.Div(id='output-data-upload',
                      ),
-            ],
-
+        ],
         ),
-
-        html.Div(id='tabs-content')
+        # main page
+        html.Div(id='main_visualization_content')
 
     ],
     id="mainContainer",
@@ -125,13 +122,74 @@ app.layout = html.Div(
 
 def render_main_visualization_layout():
     return html.Div([
+        # ---------- sliders/filters -----------
+        html.Div([
 
-        render_prog_len_slider(),
-        # 1 row 2 graphs in website
+            html.Div([
+                html.H6('Choose testing set accuracy threshold to filter'),
+
+                dcc.Slider(
+                    id='testing-acc-filter-slider',
+                    min=0,
+                    max=100,
+                    value=90,
+                    marks={str(num): str(num) + '%' for num in range(10, 100, 10)},
+                    step=1,
+                    updatemode='drag'
+                ),
+                html.Div(id='updatemode-output-testing-acc', style={'margin-top': 20})
+
+            ],
+                className="pretty_container six columns",
+            ),
+
+            html.Div([
+                html.H6('Choose number of Feature in a Program'),
+
+                # dcc.Slider(id='prog-len-filter-slider',marks={int(each_len): 'Len' + str(each_len) for each_len in [1,2]}),
+                dcc.RadioItems(id='prog-len-filter-slider', labelStyle={'display': 'inline-block'}),
+                # html.Div([dcc.Slider(id='slider')], id='slider-keeper'),  # dummy slider
+                # html.Div(id='prog-len-filter-slider'),
+                html.Div(id='updatemode-output-proglenfilter', style={'margin-top': 20})
+            ],
+                className="pretty_container six columns",
+            ),
+
+        ],
+            style={'align-items': 'center', 'justify-content': 'center'},
+            className="row container-display",
+        ),
+
+        html.Div(
+            [
+                html.Div(
+                    [html.H6(str(len(original_result.model_list))), html.P("Original Model Count")],
+                    id="Original Model Count",
+                    className="mini_container",
+                ),
+                html.Div(
+                    [html.H6(id="filtered_by_accuracy_text"), html.P("Model Count After Filtered by Testing Set Accuracy")],
+                    id="gas",
+                    className="mini_container",
+                ),
+                html.Div(
+                    [html.H6(id="filtered_by_len_text"), html.P("Model Count in current number of Feature")],
+                    id="oil",
+                    className="mini_container",
+                ),
+                html.Div(
+                    [html.H6(id="waterText"), html.P("Maybe some info?")],
+                    id="water",
+                    className="mini_container",
+                ),
+            ],
+            className="row container-display",
+        ),
+        # ------------------   first 2 graphs in website  --------------
         html.Div([
             html.Div([
                 dcc.Graph(
-                    id='sliderfilter-occurrences-scatter',
+                    id='filtered-occurrences-scatter',
                 )
             ],
                 id="left-column",
@@ -140,21 +198,40 @@ def render_main_visualization_layout():
 
             html.Div([
                 dcc.Graph(
-                    id='sliderfilter-accuracy-scatter',
+                    id='filtered-accuracy-scatter',
                 )
             ],
                 id="right-column",
                 className="pretty_container six columns",
             ),
-            ],
+        ],
             className="row flex-display",
         ),
+        #     ------------------   model visualization  --------------
+        html.Div([
+            html.Div([
+                dcc.Markdown("""
+                    **Click Models On Model Accuracy Scatter Plot**  
+
+                    Detailed Model Info:
+                """),
+
+                html.Pre(id='model-click-data',
+                         style={
+                             'border': 'thin lightgrey solid',
+                             'overflowX': 'scroll'
+                         }),
+            ],
+            className="pretty_container six columns",)
+        ],
+        className="row flex-display",
+    ),
 
         # 2 row Two Feature Co-occurrence in website
         html.Div([
             html.Div([
                 html.Div(
-                    html.H6('Two Feature Co-occurrence Analysis')
+                    html.H6('Two Feature Co-occurrence Analysis (Only For 2+ Features)')
                 ),
 
                 html.Div(
@@ -226,18 +303,6 @@ def render_main_visualization_layout():
             ],
                 className="pretty_container six columns",
             ),
-            # display program info on the right
-            html.Div([
-                dcc.Markdown("""
-                                **Click Data**  
-                        
-                                Click on points in the graph.
-                            """),
-                html.Pre(id='click-data', style=styles['pre']),
-            ],
-                className="pretty_container six columns",
-            ),
-
         ],
             className="row flex-display",
         ),
@@ -245,72 +310,82 @@ def render_main_visualization_layout():
     ])
 
 
-def render_prog_len_slider():
-    global_result.calculate_featureList_and_calcvariableList()
-    length_list = sorted(list(set([len(i) for i in global_result.feature_list])))
-    return html.Div([
+# @app.callback(
+#     dash.dependencies.Output('filtered-accuracy-scatter', 'figure'),
+#     [dash.dependencies.Input('prog-len-filter-slider', 'value')])
+# def update_accuracy_graph(pro_len):
+#     prog_index, acc_scores = global_result.get_accuracy_given_length(pro_len)
+#     prog_index = ['m' + str(i) for i in prog_index]
+#     return {
+#         'data': [
+#             {'x': prog_index, 'y': acc_scores, 'type': 'bar'}
+#         ],
+#         'layout': {
+#             'title': 'Accuracy of ' + str(pro_len) + ' Feature Models',
+#             'xaxis': {'title': 'model index'},
+#             'yaxis': {'title': 'accuracy'},
+#         },
+#     }
 
-        html.Div([
-                html.H6('Choose Length of Feature in a Program'),
-
-            dcc.Slider(
-                id='proglenfilter-slider',
-                min=length_list[0],
-                max=length_list[-1],
-                value=len(length_list),
-                marks={str(each_len): str(each_len) for each_len in length_list},
-                step=None
-            )
-
-        ],
-            className="pretty_container ten columns",
-        ),
-    ],
-        style={'align-items': 'center', 'justify-content': 'center'},
-        className="row flex-display",
-    )
+@app.callback(
+    Output('filtered-accuracy-scatter', 'figure'),
+    [Input('filtered-occurrences-scatter', 'clickData'),
+     Input('prog-len-filter-slider', 'value')])
+def update_accuracy_graph_based_on_clicks(clickData, prog_len):
+    if clickData is not None:
+        feature_num = int(clickData['points'][0]['x'][1:]) # extract data from click
+        m_index = global_result.get_index_of_models_given_feature_and_length(feature_num, prog_len)
+        testing_acc = [global_result.model_list[i].testingAccuracy for i in m_index]
+        m_index = ['m' + str(i) for i in m_index]
+        return {
+                'data': [
+                    {'x': m_index,
+                     'y': testing_acc,
+                     'mode':'markers',
+                     'marker': {'size': 3}
+                    },
+                ],
+                'layout': {
+                    'title': 'Model accuracy containing feature ' + str(feature_num) + ' with' + str(prog_len) + ' features',
+                    'xaxis': {'title': 'Program feature index'},
+                    'yaxis': {'title': 'Num of occurrences'},
+                    'clickmode': 'event+select'
+                }
+        }
+    return {  'layout': {
+                    'title': 'No graph in given selection. Click on Occurrence graph.'
+                }}
 
 
 @app.callback(
-    dash.dependencies.Output('sliderfilter-accuracy-scatter', 'figure'),
-    [dash.dependencies.Input('proglenfilter-slider', 'value')])
-def update_accuracy_graph(pro_len):
-    prog_index, acc_scores = global_result.get_accuracy_given_length(pro_len)
-    prog_index = ['m' + str(i) for i in prog_index]
-    return {
-        'data': [
-            {'x': prog_index, 'y': acc_scores, 'type': 'bar'}
-        ],
-        'layout': {
-            'title': 'Accuracy of ' + str(pro_len) + ' Feature Models',
-            'xaxis': {'title': 'model index'},
-            'yaxis': {'title': 'accuracy'},
-        },
-    }
-
-
-@app.callback(
-    dash.dependencies.Output('sliderfilter-occurrences-scatter', 'figure'),
-    [dash.dependencies.Input('proglenfilter-slider', 'value')])
+    [Output('filtered-occurrences-scatter', 'figure'),
+     Output("filtered_by_accuracy_text", "children"),
+     Output("filtered_by_len_text", "children")],
+    [Input('prog-len-filter-slider', 'value'),
+     ])
 def update_occurrence_graph(pro_len):
-    features, num_of_occurrences = global_result.get_occurrence_from_feature_list_given_length(pro_len)
+    # global_result.model_list = [i for i in original_result.model_list if
+    #                             float(i.testingAccuracy) >= ((testing_acc) / 100)]
+    global_result.calculate_featureList_and_calcvariableList()
+    features, num_of_occurrences, cur_feature_num = global_result.get_occurrence_from_feature_list_given_length(pro_len)
     features = ['f' + str(i) for i in features]
     return {
-        'data': [
-            {'x': features, 'y': num_of_occurrences, 'type': 'bar'}
-        ],
-        'layout': {
-            'title': 'Occurrences of Features of ' + str(pro_len) + ' Feature Models',
-            'xaxis': {'title': 'Program feature index'},
-            'yaxis': {'title': 'Num of occurrences'},
-        },
-    }
+               'data': [
+                   {'x': features, 'y': num_of_occurrences, 'type': 'bar'}
+               ],
+               'layout': {
+                   'title': 'Occurrences of Features of ' + str(pro_len) + ' Feature Models',
+                   'xaxis': {'title': 'Program feature index'},
+                   'yaxis': {'title': 'Num of occurrences'},
+               },
+           }, len(global_result.model_list), cur_feature_num
+
 
 
 @app.callback(
-    dash.dependencies.Output('co-occurrence-graph', 'figure'),
-    [dash.dependencies.Input('proglenfilter-slider', 'value')])
-def update_accuracy_graph(pro_len):
+    Output('co-occurrence-graph', 'figure'),
+    [Input('prog-len-filter-slider', 'value')])
+def update_co_occurrence_graph(pro_len):
     if pro_len > 1:
         cooc_matrix, feature_index = global_result.get_feature_co_occurences_matrix(pro_len)
         feature_index = ['f' + str(i) for i in feature_index]
@@ -323,10 +398,10 @@ def update_accuracy_graph(pro_len):
                 'colorscale': 'Viridis'
             }],
             'layout': {
-                'title' : 'Co-occurrence of ' + str(pro_len) + ' Feature Models'
+                'title': 'Co-occurrence of ' + str(pro_len) + ' Feature Models'
             }
         }
-    return  {}
+    return {}
 
 
 @app.callback(
@@ -365,15 +440,13 @@ def update_feature_comparision_graph(xaxis_column_name, yaxis_column_name):
         )
     }
 
-
 @app.callback(
-    Output('click-data', 'children'),
-    [Input('crossfilter-indicator-scatter', 'clickData')])
-def display_click_data(clickData):
+    Output('model-click-data', 'children'),
+    [Input('filtered-accuracy-scatter', 'clickData')])
+def update_model_click_data(clickData):
     if clickData is not None:
-        i = int(clickData['points'][0]['pointIndex'])
-        return global_result.model_list[i].bestEffProgStr_
-
+        i = int(clickData['points'][0]['x'][1:])
+        return global_result.convert_program_str_repr(global_result.model_list[i])
 
 def parse_contents(contents, filename, date):
     content_type, content_string = contents.split(',')
@@ -381,30 +454,30 @@ def parse_contents(contents, filename, date):
     decoded = base64.b64decode(content_string)
     try:
         if 'pkl' in filename:
-
-            global global_result, X, y, names, index_list , available_indicators
+            global original_result, global_result, X, y, names, index_list, available_indicators
             # initialize staff
-            global_result = ResultProcessing("dataset/RuiJin_Processed.csv")
-            global_result.load_models_directly(io.BytesIO(decoded))
-            X, y, names = global_result.X, global_result.y, global_result.names
+            original_result = ResultProcessing("dataset/RuiJin_Processed.csv")
+            original_result.load_models_directly(io.BytesIO(decoded))
+            X, y, names = original_result.X, original_result.y, original_result.names
             index_list = [i for i in range(len(names))]
             available_indicators = list(zip(index_list, names))
+            global_result = copy.deepcopy(original_result)
     except Exception as e:
         print(e)
         return html.Div([
             'There was an error processing this file.'
-            ],
+        ],
         )
 
     return html.Div([
         html.H6(filename),
         html.H6("successfully read")
-        ],
+    ],
     )
 
 
 @app.callback([Output('output-data-upload', 'children'),
-               Output('tabs-content', 'children')],
+               Output('main_visualization_content', 'children')],
               [Input('upload-data', 'contents')],
               [State('upload-data', 'filename'),
                State('upload-data', 'last_modified')])
@@ -416,8 +489,35 @@ def update_output(list_of_contents, list_of_names, list_of_dates):
             zip(list_of_contents, list_of_names, list_of_dates)]
         return children, render_main_visualization_layout()
     else:
-        return ' ',' '
+        return ' ', ' '
 
+
+@app.callback(Output('updatemode-output-testing-acc', 'children'),
+              [Input('testing-acc-filter-slider', 'value')])
+def update_tesing_filter_value(value):
+    return str(value) + "% is used to filter models"
+
+
+@app.callback(Output('updatemode-output-proglenfilter', 'children'),
+              [Input('prog-len-filter-slider', 'value')])
+def display_program_length_filter_value(value):
+    # program length filter --> effective features text display
+    return "Models with " + str(value) + " effective features are used"
+
+@app.callback(Output('prog-len-filter-slider', 'options'),
+              [Input('testing-acc-filter-slider', 'value')])
+def set_prog_len_radiobutton(testing_acc):
+    global_result.model_list = [i for i in original_result.model_list if
+                                float(i.testingAccuracy) >= ((testing_acc) / 100)]
+    global_result.calculate_featureList_and_calcvariableList()
+    length_list = sorted(list(set([len(i) for i in global_result.feature_list])))
+    return [{'label': str(i) , 'value': i} for i in length_list]
+
+
+@app.callback( Output('prog-len-filter-slider', 'value'),
+    [Input('prog-len-filter-slider', 'options')])
+def set_prog_len_value(available_options):
+    return available_options[0]['value']
 
 
 # Running server
