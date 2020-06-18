@@ -9,12 +9,43 @@
 Welcome to Linear Genetic Programming!
 ======================================
 `Linear genetic programming` package implements LGP algorithm in python, with a scikit-learn compatible API.
-This algorithm is computationally expensive, it need to run in computer clusters like
-`compute canada. <https://www.computecanada.ca/>`_
 
 |
 
 Documentation: `here1 <http://linear-genetic-programming.rtfd.io/>`_
 
 Result Visualization Website: `here2 <https://lgp-result.herokuapp.com/>`_
+
+Running
+-------
+This algorithm is computationally expensive, and it needs to run approximately 1000 times to produce enough
+data to analyze. it needs to run in computer clusters like `compute canada. <https://www.computecanada.ca/>`_
+
+Sample running python file (Run.py):
+
+.. code-block:: python
+
+    X, y, names # get X, y, names
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+    # set own parameter here
+    lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 200, populationSize = 20,
+                            fitnessThreshold = 1.0, max_prog_ini_length = 40, min_prog_ini_length = 10,
+                            maxGeneration = 2, tournamentSize = 4, showGenerationStat=False,
+                            isRandomSampling=True, maxProgLength = 500)
+    lgp.fit(X_train, y_train)
+    y_pred = lgp.predict(X_test)
+    lgp.testingAccuracy = accuracy_score(y_pred, y_test)
+    lgp.save_model()
+
+Example Bash running script:
+
+.. code-block:: console
+
+    #!/bin/bash
+    #SBATCH --time=10:00:00
+    #SBATCH --array=1-1000
+    #SBATCH --mem=500M
+    #SBATCH --job-name="lgp"
+
+    python Run.py
 

@@ -225,36 +225,16 @@ def render_main_visualization_layout():
             className="pretty_container six columns",)
         ],
         className="row flex-display",
-    ),
-
-        # 2 row Two Feature Co-occurrence in website
-        html.Div([
-            html.Div([
-                html.Div(
-                    html.H6('Two Feature Co-occurrence Analysis (Only For 2+ Features)')
-                ),
-
-                html.Div(
-                    dcc.Graph(
-                        id='co-occurrence-graph'
-                    )
-                )
-
-            ],
-                className="pretty_container eleven columns"
-            )
-
-        ],
-            className="row flex-display",
-            style={'align-items': 'center', 'justify-content': 'center'},
         ),
 
-        # 3 row selectors in website
+        # row 2 selectors in website
         html.Div([
             html.Div([
-                html.Div(
-                    html.H6('x axis' + ' / ' + 'y axis')
-                ),
+                dcc.Markdown('''
+                    **Click on co-occurrence heat map to see two feature distribution in original data.**    
+                    Or manually choose X axis / Y axis for two distribution graph on dropdown manual.
+                '''),
+
                 html.Div([
                     dcc.Dropdown(
                         id='crossfilter-xaxis-column',
@@ -288,12 +268,29 @@ def render_main_visualization_layout():
             ],
                 className="pretty_container twelve columns"
             ),
-        ],
-            className="row flex-display"
+            ],
+            className="row flex-display",
+            style={'align-items': 'center', 'justify-content': 'center'},
         ),
 
         # 4 row Two Feature Comparision in the website
         html.Div([
+            # Two Feature Co-occurrence in website
+            html.Div([
+                html.Div(
+                    html.H6('Two Feature Co-occurrence Analysis (Only For 2+ Features)')
+                ),
+
+                html.Div(
+                    dcc.Graph(
+                        id='co-occurrence-graph'
+                    )
+                )
+
+            ],
+                className="pretty_container four columns"
+            ),
+
             # 2 feature scatter plot, update based on x, y filter, see the callback
             html.Div([
                 dcc.Graph(
@@ -301,31 +298,12 @@ def render_main_visualization_layout():
                     # hoverData={'points': [{'customdata': 'Japan'}]}
                 )
             ],
-                className="pretty_container six columns",
+                className="pretty_container seven columns",
             ),
         ],
-            className="row flex-display",
+        className="row flex-display"
         ),
-
     ])
-
-
-# @app.callback(
-#     dash.dependencies.Output('filtered-accuracy-scatter', 'figure'),
-#     [dash.dependencies.Input('prog-len-filter-slider', 'value')])
-# def update_accuracy_graph(pro_len):
-#     prog_index, acc_scores = global_result.get_accuracy_given_length(pro_len)
-#     prog_index = ['m' + str(i) for i in prog_index]
-#     return {
-#         'data': [
-#             {'x': prog_index, 'y': acc_scores, 'type': 'bar'}
-#         ],
-#         'layout': {
-#             'title': 'Accuracy of ' + str(pro_len) + ' Feature Models',
-#             'xaxis': {'title': 'model index'},
-#             'yaxis': {'title': 'accuracy'},
-#         },
-#     }
 
 @app.callback(
     Output('filtered-accuracy-scatter', 'figure'),
@@ -398,24 +376,32 @@ def update_co_occurrence_graph(pro_len):
                 'colorscale': 'Viridis'
             }],
             'layout': {
-                'title': 'Co-occurrence of ' + str(pro_len) + ' Feature Models'
+                'title': 'Co-occurrence of ' + str(pro_len) + ' Feature Models',
+                #'margin': dict(l=20, r=20, t=20, b=20)
             }
         }
     return {}
 
 
 @app.callback(
-    dash.dependencies.Output('crossfilter-indicator-scatter', 'figure'),
-    [dash.dependencies.Input('crossfilter-xaxis-column', 'value'),
-     dash.dependencies.Input('crossfilter-yaxis-column', 'value')])
-def update_feature_comparision_graph(xaxis_column_name, yaxis_column_name):
-    xaxis_column_name = int(xaxis_column_name)
-    yaxis_column_name = int(yaxis_column_name)
+    Output('crossfilter-indicator-scatter', 'figure'),
+    [Input('crossfilter-xaxis-column', 'value'),
+     Input('crossfilter-yaxis-column', 'value'),
+     Input('co-occurrence-graph', 'clickData')])
+def update_feature_comparision_graph_using_filters(xaxis_column_index, yaxis_column_index, co_click_data):
+    ctx = dash.callback_context
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if trigger_id == 'crossfilter-xaxis-column' or trigger_id == 'crossfilter-yaxis-column':
+        xaxis_column_index = int(xaxis_column_index)
+        yaxis_column_index = int(yaxis_column_index)
+    elif trigger_id == 'co-occurrence-graph':
+        xaxis_column_index = int(co_click_data['points'][0]['x'][1:])
+        yaxis_column_index = int(co_click_data['points'][0]['y'][1:])
     type_name = ['AD', 'Normal']
     return {
         'data': [dict(
-            x=X[:, int(xaxis_column_name)][y == type],
-            y=X[:, int(yaxis_column_name)][y == type],
+            x=X[:, int(xaxis_column_index)][y == type],
+            y=X[:, int(yaxis_column_index)][y == type],
             mode='markers',
             marker={
                 'size': 15,
@@ -427,11 +413,11 @@ def update_feature_comparision_graph(xaxis_column_name, yaxis_column_name):
         ],
         'layout': dict(
             xaxis={
-                'title': names[xaxis_column_name],
+                'title': names[int(xaxis_column_index)],
                 'type': 'linear'
             },
             yaxis={
-                'title': names[yaxis_column_name],
+                'title': names[int(yaxis_column_index)],
                 'type': 'linear'
             },
             hovermode='closest',
@@ -481,7 +467,7 @@ def parse_contents(contents, filename, date):
               [Input('upload-data', 'contents')],
               [State('upload-data', 'filename'),
                State('upload-data', 'last_modified')])
-def update_output(list_of_contents, list_of_names, list_of_dates):
+def update_file_output(list_of_contents, list_of_names, list_of_dates):
     # display read file status and update main visualization Div
     if list_of_contents is not None:
         children = [

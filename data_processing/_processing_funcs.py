@@ -182,7 +182,7 @@ class ResultProcessing:
         s += 'Output register r[0] will then go through sigmoid transformation S \nif S(r[0]) is less or equal ' \
              'than 0.5:\n  this sample will be classified by this model as class 0, i.e. diseased. \nelse:\n' \
              '  class 1, i.e. not diseased'
-        print(s)
+        # print(s)
         return s
 
 if __name__ == '__main__':
