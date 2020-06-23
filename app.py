@@ -2,6 +2,7 @@ import dash
 import numpy as np
 import base64
 import datetime
+import os
 import copy
 import io
 import dash_core_components as dcc
@@ -107,6 +108,17 @@ app.layout = html.Div(
                 # Allow multiple files to be uploaded
                 multiple=True
             ),
+
+            html.A(
+                html.Button(
+                    'Download sample pickle result data',
+                    id='speck-file-download',
+                    className='control-download'
+                ),
+                href=os.path.join('assets', 'sample_data', 'lgp_sample.pkl'),
+                download='lgp_sample.pkl'
+            ),
+
             html.Div(id='output-data-upload',
                      ),
         ],
@@ -173,12 +185,12 @@ def render_main_visualization_layout():
                     className="mini_container",
                 ),
                 html.Div(
-                    [html.H6(id="filtered_by_len_text"), html.P("Model Count in current number of Feature")],
+                    [html.H6(id="filtered_by_len_text"), html.P("Model Count After Filtered by Accuracy and Number of Feature")],
                     id="oil",
                     className="mini_container",
                 ),
                 html.Div(
-                    [html.H6(id="waterText"), html.P("Maybe some info?")],
+                    [html.H6(id="waterText"), html.P("Maybe some extra info?")],
                     id="water",
                     className="mini_container",
                 ),
@@ -346,11 +358,16 @@ def update_occurrence_graph(pro_len):
     #                             float(i.testingAccuracy) >= ((testing_acc) / 100)]
     global_result.calculate_featureList_and_calcvariableList()
     features, num_of_occurrences, cur_feature_num = global_result.get_occurrence_from_feature_list_given_length(pro_len)
+    hover_text = [names[i] for i in features]
     features = ['f' + str(i) for i in features]
     return {
-               'data': [
-                   {'x': features, 'y': num_of_occurrences, 'type': 'bar'}
-               ],
+               'data': [{
+                    'x': features,
+                    'y': num_of_occurrences,
+                    'type': 'bar',
+                    'hoverinfo': 'text',
+                    'text': hover_text
+               }],
                'layout': {
                    'title': 'Occurrences of Features of ' + str(pro_len) + ' Feature Models',
                    'xaxis': {'title': 'Program feature index'},
@@ -366,6 +383,11 @@ def update_occurrence_graph(pro_len):
 def update_co_occurrence_graph(pro_len):
     if pro_len > 1:
         cooc_matrix, feature_index = global_result.get_feature_co_occurences_matrix(pro_len)
+        hover_text = []
+        for yi, yy in enumerate(feature_index):
+            hover_text.append([])
+            for xi, xx in enumerate(feature_index):
+                hover_text[-1].append('X: {}<br />Y: {}<br />Count: {}'.format(names[int(xx)], names[int(yy)], cooc_matrix[xi, yi]))
         feature_index = ['f' + str(i) for i in feature_index]
         return {
             'data': [{
@@ -373,7 +395,9 @@ def update_co_occurrence_graph(pro_len):
                 'x': feature_index,
                 'y': feature_index,
                 'type': 'heatmap',
-                'colorscale': 'Viridis'
+                'colorscale': 'Viridis',
+                'hoverinfo': 'text',
+                'text': hover_text
             }],
             'layout': {
                 'title': 'Co-occurrence of ' + str(pro_len) + ' Feature Models',

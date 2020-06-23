@@ -33,7 +33,7 @@ class ResultProcessing:
 
     def readDataRuiJin(self):
         df = self.get_original_dataframe()
-        names = df.columns[1:]
+        names = df.columns[1:].values
         # AMCI VS Normal
         df = df[(df['category'] == 2) | (df['category'] == 3)]
         y = df['category'].values.astype('int64')
@@ -46,7 +46,7 @@ class ResultProcessing:
 
     def readDataRuiJinAD(self):
         df = self.get_original_dataframe()
-        names = df.columns[1:]
+        names = df.columns[1:].values
         # AD VS Normal
         df = df[(df['category'] == 1) | (df['category'] == 3)]
         y = df['category'].values.astype('int64')
@@ -190,12 +190,20 @@ if __name__ == '__main__':
     result = ResultProcessing("../dataset/RuiJin_Processed.csv")
     result.load_models_from_file_path("../dataset/lgp_acc.pkl")
     X, y, names = result.readDataRuiJinAD()
+    a = names.values
     result.calculate_featureList_and_calcvariableList()
     # prog_index, acc_scores =  result.get_accuracy_given_length(1)
     # index = result.get_index_of_models_given_feature_and_length(87, 1)
     # print(index)
     # for i in index:
     #     print(result.model_list[i].bestEffProgStr_)
-    print(result.model_list[899].bestEffProgStr_)
-    result.convert_program_str_repr(result.model_list[20])
+    # print(result.model_list[899].bestEffProgStr_)
+    # result.convert_program_str_repr(result.model_list[20])
+    # co_matrix, featureIndex = result.get_feature_co_occurences_matrix(2)
+    # hover_text = []
+    # for yi, yy in enumerate(featureIndex):
+    #     hover_text.append([])
+    #     for xi, xx in enumerate(featureIndex):
+    #         hover_text[-1].append('X: {}<br />Y: {}<br />Count: {}'.format(xx, yy, co_matrix[xi,yi]))
+    # print(hover_text)
 
