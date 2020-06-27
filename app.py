@@ -224,7 +224,6 @@ def render_main_visualization_layout():
             html.Div([
                 dcc.Markdown("""
                     **Click Models On Model Accuracy Scatter Plot**  
-
                     Detailed Model Info:
                 """),
 
@@ -517,6 +516,7 @@ def display_program_length_filter_value(value):
 @app.callback(Output('prog-len-filter-slider', 'options'),
               [Input('testing-acc-filter-slider', 'value')])
 def set_prog_len_radiobutton(testing_acc):
+    global global_result  # need to update global_result
     global_result.model_list = [i for i in original_result.model_list if
                                 float(i.testingAccuracy) >= ((testing_acc) / 100)]
     global_result.calculate_featureList_and_calcvariableList()

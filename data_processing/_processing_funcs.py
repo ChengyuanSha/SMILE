@@ -166,7 +166,7 @@ class ResultProcessing:
                 if int(var) < model.numberOfVariable and int(var) != 0: # calculation variable
                     current_string = re.sub('r' + re.escape(var), str(round(model.register_[int(var)], 2)),
                                             current_string)
-                elif int(var) > model.numberOfVariable and int(var) != 0: # features
+                elif int(var) >= model.numberOfVariable and int(var) != 0: # features
                     name_index = int(var) - model.numberOfVariable
                     current_string = re.sub('r' + re.escape(var), str(self.names[name_index]), current_string)
             # take care of indentation
@@ -190,15 +190,17 @@ if __name__ == '__main__':
     result = ResultProcessing("../dataset/RuiJin_Processed.csv")
     result.load_models_from_file_path("../dataset/lgp_acc.pkl")
     X, y, names = result.readDataRuiJinAD()
-    a = names.values
     result.calculate_featureList_and_calcvariableList()
     # prog_index, acc_scores =  result.get_accuracy_given_length(1)
-    # index = result.get_index_of_models_given_feature_and_length(87, 1)
+
+    # index = result.get_index_of_models_given_feature_and_length(105, 3)
     # print(index)
     # for i in index:
     #     print(result.model_list[i].bestEffProgStr_)
-    # print(result.model_list[899].bestEffProgStr_)
-    # result.convert_program_str_repr(result.model_list[20])
+
+    print(result.model_list[205].bestEffProgStr_)
+    s = result.convert_program_str_repr(result.model_list[205])
+    print(s)
     # co_matrix, featureIndex = result.get_feature_co_occurences_matrix(2)
     # hover_text = []
     # for yi, yy in enumerate(featureIndex):
@@ -206,4 +208,14 @@ if __name__ == '__main__':
     #     for xi, xx in enumerate(featureIndex):
     #         hover_text[-1].append('X: {}<br />Y: {}<br />Count: {}'.format(xx, yy, co_matrix[xi,yi]))
     # print(hover_text)
+
+    # result_data = jsonpickle.encode(result)
+    # start = time.time()
+    # result_data = jsonpickle.decode(result_data)
+    # end = time.time()
+    # # start = time.time()
+    # # result_data = result.toJSON()
+    # # result_data = jsonpickle.decode(result_data)
+    # # end = time.time()
+    # print(end - start)
 
