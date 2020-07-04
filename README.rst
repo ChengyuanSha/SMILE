@@ -16,6 +16,14 @@ Documentation: `here1 <http://linear-genetic-programming.rtfd.io/>`_
 
 Result Visualization Website: `here2 <https://lgp-result.herokuapp.com/>`_
 
+Installation
+------------
+This package is published on pypi. Install using pip.
+
+.. code-block:: python
+
+    pip install lgp
+
 Running
 -------
 This algorithm is computationally expensive, and it needs to run approximately 1000 times to produce enough
