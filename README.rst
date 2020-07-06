@@ -8,7 +8,8 @@
 
 Welcome to Linear Genetic Programming!
 ======================================
-`Linear genetic programming` package implements LGP algorithm in python, with a scikit-learn compatible API.
+**Linear genetic programming** package implements LGP algorithm in python, with a scikit-learn style API. It is
+mainly used in data mining and finding feature interactions. Note it currently only support binary classification data.
 
 |
 
@@ -26,7 +27,7 @@ This package is published on pypi. Install using pip.
 
 Running
 -------
-This algorithm is computationally expensive, and it needs to run approximately 1000 times to produce enough
+This algorithm is **computationally expensive**, and it needs to run approximately 1000 times parallel to produce enough
 data to analyze. it needs to run in computer clusters like `compute canada. <https://www.computecanada.ca/>`_
 
 Sample running python file (Run.py):
@@ -57,3 +58,9 @@ Example Bash running script:
 
     python Run.py
 
+Reference
+---------
+Linear_Genetic_Programming_.
+Authors: Brameier, Markus F., Banzhaf, Wolfgang
+
+.. _Linear_Genetic_Programming: https://www.springer.com/gp/book/9780387310299

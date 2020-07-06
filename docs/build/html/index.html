@@ -36,11 +36,6 @@
 <h1>Linear Genetic Programming’s documentation<a class="headerlink" href="#linear-genetic-programming-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p><cite>It is not the strongest of the species that survives, nor the most intelligent that survives.
-It is the one that is most adaptable to change.
-— Charles Darwin</cite></p>
-</div></blockquote>
 <p>Linear Genetic Programming (LGP) is a paradigm of genetic programming that employs a representation of
 linearly sequenced instructions. A population of diverse candidate models is initialized randomly and
 will improve prediction accuracy gradually using random sampled training set through a number of generations.
@@ -54,7 +49,7 @@ It retains the familiar scikit-learn <cite>fit/predict</cite> API and works with
 <span id="lgp-api"></span><h2>LGP API<a class="headerlink" href="#module-linear_genetic_programming.lgp_classifier" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier">
-<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em>, <em class="sig-param">randomState=None</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em>, <em class="sig-param">randomState=None</em>, <em class="sig-param">testingAccuracy=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Genetic Programming algorithm with scikit learn inspired API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -129,9 +124,11 @@ Set to False to save time. Some average statistical calculations is time consumi
 </dd>
 <dt><strong>bestProgStr_: str</strong></dt><dd><p>String representation of the best program</p>
 </dd>
-<dt><strong>bestEffProgStr_: str</strong></dt><dd><p>Intron removed program</p>
+<dt><strong>bestEffProgStr_: str</strong></dt><dd><p>Intron removed program string representation</p>
 </dd>
 <dt><strong>populationAvg_: float</strong></dt><dd><p>Average fitness of the final generation</p>
+</dd>
+<dt><strong>testingAccuracy: int</strong></dt><dd><p>used to save testing set accuracy score</p>
 </dd>
 </dl>
 </dd>
@@ -152,19 +149,22 @@ Set to False to save time. Some average statistical calculations is time consumi
 <tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>([fname, mode])</p></td>
 <td><p>load lgp object from a pickle file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model_directly" title="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model_directly"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model_directly</span></code></a>(pickle_file_input)</p></td>
+<td><p>Used to read a file in website</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, X)</p></td>
 <td><p>Predict using the best fit genetic model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_proba</span></code></a>(self, X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba" title="linear_genetic_programming.lgp_classifier.LGPClassifier.predict_proba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_proba</span></code></a>(self, X)</p></td>
 <td><p>Probability estimates.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.save_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.save_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_model</span></code></a>(self[, fname, mode])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.save_model" title="linear_genetic_programming.lgp_classifier.LGPClassifier.save_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_model</span></code></a>(self[, fname, mode])</p></td>
 <td><p>Save the current object into a pickle file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="linear_genetic_programming.lgp_classifier.LGPClassifier.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(self, X, y[, sample_weight])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.score" title="linear_genetic_programming.lgp_classifier.LGPClassifier.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(self, X, y[, sample_weight])</p></td>
 <td><p>Return the mean accuracy on the given test data and labels.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.set_params" title="linear_genetic_programming.lgp_classifier.LGPClassifier.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(self, \*\*params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.set_params" title="linear_genetic_programming.lgp_classifier.LGPClassifier.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(self, \*\*params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 </tbody>
@@ -222,6 +222,26 @@ same directory</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>fname: string (default = ‘lgp.pkl’)</strong></dt><dd><p>file name of the output</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>lgp: LGPClassifier generator</dt><dd><p>generator</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="linear_genetic_programming.lgp_classifier.LGPClassifier.load_model_directly">
+<em class="property">classmethod </em><code class="sig-name descname">load_model_directly</code><span class="sig-paren">(</span><em class="sig-param">pickle_file_input</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier.load_model_directly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to read a file in website</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pickle_file_input: byte stream</strong></dt><dd><p>BytesIO input</p>
 </dd>
 </dl>
 </dd>
@@ -360,11 +380,6 @@ component of a nested object.</p>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
-<div class="section" id="reference">
-<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://www.springer.com/gp/book/9780387310299">Linear_Genetic_Programming</a>.
-Authors: Brameier, Markus F., Banzhaf, Wolfgang</p>
 </div>
 </div>
 

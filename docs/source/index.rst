@@ -15,10 +15,6 @@ Linear Genetic Programming's documentation
 Introduction
 ------------
 
-   `It is not the strongest of the species that survives, nor the most intelligent that survives.
-   It is the one that is most adaptable to change.
-   --- Charles Darwin`
-
 Linear Genetic Programming (LGP) is a paradigm of genetic programming that employs a representation of
 linearly sequenced instructions. A population of diverse candidate models is initialized randomly and
 will improve prediction accuracy gradually using random sampled training set through a number of generations.
@@ -46,10 +42,4 @@ Indices and tables
 * :ref:`search`
 
 
-Reference
----------
-Linear_Genetic_Programming_.
-Authors: Brameier, Markus F., Banzhaf, Wolfgang
-
-.. _Linear_Genetic_Programming: https://www.springer.com/gp/book/9780387310299
 

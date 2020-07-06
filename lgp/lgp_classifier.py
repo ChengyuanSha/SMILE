@@ -119,7 +119,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
 
     testingAccuracy: int
         used to save testing set accuracy score
-
+    names: list
+        feature names of the dataset
     '''
 
     def __init__(self,
@@ -145,7 +146,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                  isRandomSampling=True,
                  constInitRange=(1, 11, 1),
                  randomState = None,
-                 testingAccuracy = -1):
+                 testingAccuracy = -1,
+                 names=None):
         self.numberOfInput = numberOfInput
         self.numberOfOperation = numberOfOperation
         self.numberOfVariable = numberOfVariable
@@ -169,6 +171,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.constInitRange = constInitRange
         self.randomState = randomState
         self.testingAccuracy = testingAccuracy
+        self.names = names
 
     def __generateRegister(self):
         # Initialization of register
