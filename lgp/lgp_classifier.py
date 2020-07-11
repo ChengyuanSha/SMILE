@@ -94,6 +94,9 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     randomState: int, default=None
         Controls both the randomness of the algorithm.
 
+    names: list
+        feature names of the dataset
+
     Attributes
     ----------
     register_: array of shape (numberOfInput + numberOfVariable + numberOfConstant, )
@@ -119,8 +122,6 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
 
     testingAccuracy: int
         used to save testing set accuracy score
-    names: list
-        feature names of the dataset
     '''
 
     def __init__(self,

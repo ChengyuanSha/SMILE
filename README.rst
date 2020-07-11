@@ -5,6 +5,8 @@
     :target: https://www.codacy.com/manual/ChengyuanSha/linear_genetic_programming?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ChengyuanSha/linear_genetic_programming&amp;utm_campaign=Badge_Grade
 .. image:: https://img.shields.io/website?up_message=result%20visualization&url=https%3A%2F%2Flgp-result.herokuapp.com%2F
     :target: https://lgp-result.herokuapp.com/
+.. image:: https://badge.fury.io/py/lgp.svg
+    :target: https://badge.fury.io/py/lgp
 
 Welcome to Linear Genetic Programming!
 ======================================
