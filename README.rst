@@ -15,7 +15,7 @@ mainly used in data mining and finding feature interactions. Note it currently o
 
 |
 
-Documentation: `here1 <http://linear-genetic-programming.rtfd.io/>`_
+API Documentation: `here1 <http://linear-genetic-programming.rtfd.io/>`_
 
 Result Visualization Website: `here2 <https://lgp-result.herokuapp.com/>`_
 
@@ -32,9 +32,13 @@ Running
 This algorithm is **computationally expensive**, and it needs to run approximately 1000 times parallel to produce enough
 data to analyze. it needs to run in computer clusters like `compute canada. <https://www.computecanada.ca/>`_
 
-Sample running python file (Run.py):
+Create **Run.py** in the same directory as lgp folder, Sample running python file (Run.py):
 
 .. code-block:: python
+
+    from lgp.lgp_classifier import LGPClassifier
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import accuracy_score
 
     X, y, names # get X, y, names
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
@@ -48,7 +52,8 @@ Sample running python file (Run.py):
     lgp.testingAccuracy = accuracy_score(y_pred, y_test)
     lgp.save_model()
 
-Example Bash running script:
+Then use **bash file** to set running parameters and submit jobs. This might be different in different supercomputers.
+Example Bash running script in Compute Canada:
 
 .. code-block:: console
 
@@ -59,6 +64,11 @@ Example Bash running script:
     #SBATCH --job-name="lgp"
 
     python Run.py
+
+Result Visualization
+--------------------
+After Running on clusters, upload result pkl file to `result visualization website. <https://lgp-result.herokuapp.com/>`_
+This will help you visualize the result.
 
 Reference
 ---------
