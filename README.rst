@@ -10,14 +10,9 @@
 
 Welcome to Linear Genetic Programming!
 ======================================
-**Linear genetic programming** package implements LGP algorithm in python, with a scikit-learn style API. It is
+**Linear Genetic Programming(LGP)** package implements LGP algorithm in python, with a scikit-learn style API. It is
 mainly used in data mining and finding feature interactions. Note it currently only support binary classification data.
 
-|
-
-API Documentation: `here1 <http://linear-genetic-programming.rtfd.io/>`_
-
-Result Visualization Website: `here2 <https://lgp-result.herokuapp.com/>`_
 
 Installation
 ------------
@@ -27,9 +22,9 @@ This package is published on pypi. Install using pip.
 
     pip install lgp
 
-Running
--------
-This algorithm is **computationally expensive**, and it needs to run approximately 1000 times parallel to produce enough
+Running the algorithm
+---------------------
+This algorithm is **computationally expensive**, and it needs to run approximately 1000 times in parallel to produce enough
 data to analyze. it needs to run in computer clusters like `compute canada. <https://www.computecanada.ca/>`_
 
 Create **Run.py** in the same directory as lgp folder, Sample running python file (Run.py):
@@ -65,10 +60,34 @@ Example Bash running script in Compute Canada:
 
     python Run.py
 
-Result Visualization
---------------------
+Result Visualization on the Web
+-------------------------------
 After Running on clusters, upload result pkl file to `result visualization website. <https://lgp-result.herokuapp.com/>`_
 This will help you visualize the result.
+
+Result Visualization Locally
+-----------------------------
+You can also run the visualization locally. Download `website source code. <https://github.com/ChengyuanSha/LGPWeb>`_
+After installing all requirements, you can run this website in your local browser
+
+Visualization Demo
+-------------------
+Feature Occurrence Analysis
+
+.. image:: ../assets/feature_occurrence_analysis.gif
+
+|
+
+Pairwise Co-occurrence Analysis
+
+.. image:: ../assets/pairwise_co-occurrence_analysis.gif
+
+|
+
+Network Analysis
+
+.. image:: ../assets/network.gif
+
 
 Reference
 ---------
