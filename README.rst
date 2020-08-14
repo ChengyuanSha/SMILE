@@ -74,19 +74,19 @@ Visualization Demo
 -------------------
 Feature Occurrence Analysis
 
-.. image:: ../assets/feature_occurrence_analysis.gif
+.. image:: assets/feature_occurrence_analysis.gif
 
 |
 
 Pairwise Co-occurrence Analysis
 
-.. image:: ../assets/pairwise_co-occurrence_analysis.gif
+.. image:: assets/pairwise_co-occurrence_analysis.gif
 
 |
 
 Network Analysis
 
-.. image:: ../assets/network.gif
+.. image:: assets/network.gif
 
 
 Reference
