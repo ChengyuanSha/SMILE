@@ -31,11 +31,14 @@ Create **Run.py** in the same directory as lgp folder, Sample running python fil
 
 .. code-block:: python
 
-    from lgp.lgp_classifier import LGPClassifier
+    from linear_genetic_programming.lgp_classifier import LGPClassifier
     from sklearn.model_selection import train_test_split
     from sklearn.metrics import accuracy_score
+    from sklearn import metrics
 
-    X, y, names # get X, y, names
+    # preprocess your data, get data matrix X, label y and names
+    # X, y are in scikit-learn style
+    X, y, names
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
     # set own parameter here
     lgp = LGPClassifier(numberOfInput = X_train.shape[1], numberOfVariable = 200, populationSize = 20,
@@ -44,7 +47,14 @@ Create **Run.py** in the same directory as lgp folder, Sample running python fil
                             isRandomSampling=True, maxProgLength = 500)
     lgp.fit(X_train, y_train)
     y_pred = lgp.predict(X_test)
+    y_prob = lgp.predict_proba(X_test)[:, 0]
     lgp.testingAccuracy = accuracy_score(y_pred, y_test)
+    # calculate F1, AUC scores
+    f1_scores = metrics.f1_score(y_test, y_pred, pos_label=0)
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, y_prob, pos_label=0)
+    auc_scores = metrics.auc(fpr, tpr)
+    # store F1, AUC in validationScores
+    lgp.validationScores = {'f1':f1_scores, 'auc':auc_scores}
     lgp.save_model()
 
 Then use **bash file** to set running parameters and submit jobs. This might be different in different supercomputers.

@@ -49,7 +49,7 @@ It retains the familiar scikit-learn <cite>fit/predict</cite> API and works with
 <span id="lgp-api"></span><h2>LGP API<a class="headerlink" href="#module-linear_genetic_programming.lgp_classifier" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="linear_genetic_programming.lgp_classifier.LGPClassifier">
-<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em>, <em class="sig-param">randomState=None</em>, <em class="sig-param">testingAccuracy=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">linear_genetic_programming.lgp_classifier.</code><code class="sig-name descname">LGPClassifier</code><span class="sig-paren">(</span><em class="sig-param">numberOfInput</em>, <em class="sig-param">numberOfOperation=5</em>, <em class="sig-param">numberOfVariable=4</em>, <em class="sig-param">numberOfConstant=9</em>, <em class="sig-param">max_prog_ini_length=30</em>, <em class="sig-param">min_prog_ini_length=10</em>, <em class="sig-param">maxProgLength=300</em>, <em class="sig-param">minProgLength=10</em>, <em class="sig-param">pCrossover=0.75</em>, <em class="sig-param">pConst=0.5</em>, <em class="sig-param">pInsert=0.5</em>, <em class="sig-param">pRegmut=0.6</em>, <em class="sig-param">pMacro=0.75</em>, <em class="sig-param">pMicro=0.5</em>, <em class="sig-param">tournamentSize=2</em>, <em class="sig-param">maxGeneration=200</em>, <em class="sig-param">fitnessThreshold=1.0</em>, <em class="sig-param">populationSize=1000</em>, <em class="sig-param">showGenerationStat=True</em>, <em class="sig-param">isRandomSampling=True</em>, <em class="sig-param">constInitRange=(1</em>, <em class="sig-param">11</em>, <em class="sig-param">1)</em>, <em class="sig-param">randomState=None</em>, <em class="sig-param">testingAccuracy=-1</em>, <em class="sig-param">validationScores=None</em>, <em class="sig-param">names=None</em><span class="sig-paren">)</span><a class="headerlink" href="#linear_genetic_programming.lgp_classifier.LGPClassifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Genetic Programming algorithm with scikit learn inspired API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -110,6 +110,12 @@ Set to False to save time. Some average statistical calculations is time consumi
 </dd>
 <dt><strong>randomState: int, default=None</strong></dt><dd><p>Controls both the randomness of the algorithm.</p>
 </dd>
+<dt><strong>testingAccuracy: int</strong></dt><dd><p>used to save testing set accuracy score</p>
+</dd>
+<dt><strong>validationScores: dict</strong></dt><dd><p>used to hold validation metrics during running</p>
+</dd>
+<dt><strong>names: list</strong></dt><dd><p>feature names of the dataset</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Attributes</dt>
@@ -127,8 +133,6 @@ Set to False to save time. Some average statistical calculations is time consumi
 <dt><strong>bestEffProgStr_: str</strong></dt><dd><p>Intron removed program string representation</p>
 </dd>
 <dt><strong>populationAvg_: float</strong></dt><dd><p>Average fitness of the final generation</p>
-</dd>
-<dt><strong>testingAccuracy: int</strong></dt><dd><p>used to save testing set accuracy score</p>
 </dd>
 </dl>
 </dd>

@@ -1,5 +1,5 @@
-from lgp._instruction import Instruction
-from lgp._genetic_operations import GeneticOperations
+from linear_genetic_programming._instruction import Instruction
+from linear_genetic_programming._genetic_operations import GeneticOperations
 import numpy as np
 import copy
 

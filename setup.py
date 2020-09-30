@@ -4,7 +4,7 @@ long_description = "Check github (https://github.com/ChengyuanSha/linear_genetic
 
 setuptools.setup(
     name="lgp",
-    version="0.0.2",
+    version="0.0.5",
     author="Chengyuan Sha",
     author_email="15cs69@queensu.ca",
     description="A python implementation of linear genetic programming algorithm",

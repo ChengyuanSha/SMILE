@@ -1,4 +1,4 @@
-from lgp._instruction import Instruction
+from linear_genetic_programming._instruction import Instruction
 import copy
 import numpy as np
 from sklearn.metrics import accuracy_score

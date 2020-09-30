@@ -1,5 +1,5 @@
-from lgp._evolve import Evolve
-from lgp._population import Population
+from linear_genetic_programming._evolve import Evolve
+from linear_genetic_programming._population import Population
 import numpy as np
 import copy
 import pickle
@@ -94,6 +94,12 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     randomState: int, default=None
         Controls both the randomness of the algorithm.
 
+    testingAccuracy: int
+        used to save testing set accuracy score
+
+    validationScores: dict
+        used to hold validation metrics during running
+
     names: list
         feature names of the dataset
 
@@ -120,8 +126,6 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     populationAvg_: float
         Average fitness of the final generation
 
-    testingAccuracy: int
-        used to save testing set accuracy score
     '''
 
     def __init__(self,
@@ -146,8 +150,9 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
                  showGenerationStat=True,
                  isRandomSampling=True,
                  constInitRange=(1, 11, 1),
-                 randomState = None,
-                 testingAccuracy = -1,
+                 randomState=None,
+                 testingAccuracy=-1,
+                 validationScores=None,
                  names=None):
         self.numberOfInput = numberOfInput
         self.numberOfOperation = numberOfOperation
@@ -172,6 +177,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         self.constInitRange = constInitRange
         self.randomState = randomState
         self.testingAccuracy = testingAccuracy
+        self.validationScores = validationScores
         self.names = names
 
     def __generateRegister(self):
@@ -255,7 +261,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             Returns predicted values.
         """
         X = check_array(X)
-        #check_is_fitted(self)
+        # check_is_fitted(self)
         classType = self.classes_[0].dtype
         n_samples = X.shape[0]
         y_pred = np.zeros(n_samples, dtype=classType)
@@ -281,7 +287,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
            Returns the probability of the sample for each class in the model,
            where classes are ordered as they are in ``self.classes_``.
         """
-        #check_is_fitted(self)
+        # check_is_fitted(self)
 
         n_samples = X.shape[0]
         # only support binary classification
@@ -289,12 +295,8 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         for i, row in enumerate(X):
             sigmoid_pred = self.bestProg_.predictProbaSigmoid(self.numberOfVariable, self.register_, row,
                                                               self.classes_, 'prob')
-            if sigmoid_pred <= 0.5:  # class 0
-                y_pred[i, 0] = sigmoid_pred
-                y_pred[i, 1] = 1 - sigmoid_pred
-            else:  # class 1
-                y_pred[i, 0] = 1 - sigmoid_pred
-                y_pred[i, 1] = sigmoid_pred
+            y_pred[i, 0] = 1 - sigmoid_pred  # when <= 0.5, there is larger probability in class 0
+            y_pred[i, 1] = sigmoid_pred  # when >0.5, there is larger probability in class 1
         return y_pred
 
     def save_model(self, fname='lgp.pkl', mode='ab'):
@@ -361,7 +363,6 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             except EOFError:
                 break
 
-
     # semantic intron does not alter the value stored in r0
     # Algorithm 3.1 detection of structural introns from LGP book
     def __remove_semantic_intron(self, X, y, Prog):
@@ -371,7 +372,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             y_pred1 = np.zeros(X.shape[0], dtype=self.classes_[0].dtype)
             for i, row in enumerate(X):
                 y_pred1[i] = p.predictProbaSigmoid(self.numberOfVariable, self.register_, row,
-                                                               self.classes_)
+                                                   self.classes_)
             result1_acc = accuracy_score(y, y_pred1)
 
             p2 = copy.deepcopy(p)
@@ -379,7 +380,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
             y_pred2 = np.zeros(X.shape[0], dtype=self.classes_[0].dtype)
             for i, row in enumerate(X):
                 y_pred2[i] = p2.predictProbaSigmoid(self.numberOfVariable, self.register_, row,
-                                                               self.classes_)
+                                                    self.classes_)
             result2_acc = accuracy_score(y, y_pred2)
 
             if np.array_equal(y_pred1, y_pred2) and result1_acc == result2_acc:  # result is the same
@@ -387,7 +388,6 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         for index in sorted(remove_index, reverse=True):
             del p.seq[index]
         return p
-
 
     def _more_tags(self):
         return {'binary_only': True}

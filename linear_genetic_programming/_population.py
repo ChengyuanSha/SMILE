@@ -1,4 +1,4 @@
-from lgp._program import Program
+from linear_genetic_programming._program import Program
 import numpy as np
 
 
