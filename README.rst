@@ -72,8 +72,9 @@ Example Bash running script in Compute Canada:
 
 Result Visualization on the Web
 -------------------------------
-After Running on clusters, upload result pkl file to `result visualization website. <https://lgp-result.herokuapp.com/>`_
-This will help you visualize the result.
+After Running on clusters, upload result pkl file to `result visualization website. <https://smile-mib.herokuapp.com/>`_
+This will help you visualize the result. Note the web server uses ephemeral filesystem, that means all files are lost
+whenever you restart the web.
 
 Result Visualization Locally
 -----------------------------
