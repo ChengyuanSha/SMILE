@@ -8,7 +8,7 @@
 .. image:: https://badge.fury.io/py/lgp.svg
     :target: https://badge.fury.io/py/lgp
 
-SystemsMetabolomics using Interpretable Learning and Evolution (SMILE)
+Systems Metabolomics using Interpretable Learning and Evolution (SMILE)
 =======================================================================
 **SMILE** package implements Linear Genetic Programming (LGP) algorithm in python, with a scikit-learn style API. It is
 mainly used in data mining and finding feature interactions. Note it currently only support binary classification data.
