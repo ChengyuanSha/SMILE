@@ -8,9 +8,9 @@
 .. image:: https://badge.fury.io/py/lgp.svg
     :target: https://badge.fury.io/py/lgp
 
-Welcome to Linear Genetic Programming!
-======================================
-**Linear Genetic Programming(LGP)** package implements LGP algorithm in python, with a scikit-learn style API. It is
+SystemsMetabolomics using Interpretable Learning and Evolution (SMILE)
+=======================================================================
+**SMILE** package implements Linear Genetic Programming (LGP) algorithm in python, with a scikit-learn style API. It is
 mainly used in data mining and finding feature interactions. Note it currently only support binary classification data.
 
 
@@ -58,7 +58,7 @@ Create **Run.py** in the same directory as lgp folder, Sample running python fil
     lgp.save_model()
 
 Then use **bash file** to set running parameters and submit jobs. This might be different in different supercomputers.
-Example Bash running script in Compute Canada:
+Here is an example Bash running script in Compute Canada:
 
 .. code-block:: console
 
@@ -72,14 +72,16 @@ Example Bash running script in Compute Canada:
 
 Result Visualization on the Web
 -------------------------------
-After Running on clusters, upload result pkl file to `result visualization website. <https://smile-mib.herokuapp.com/>`_
-This will help you visualize the result. Note the web server uses ephemeral filesystem, that means all files are lost
-whenever you restart the web.
+After Running on clusters, upload result pkl file to `result visualization website (herokuapp hosting). <https://smile-mib.herokuapp.com/>`_
+or `result visualization website (Queen's CS hosting). <https://smile-mib.cs.queensu.ca/>`_.
+This will help you visualize the result.
+Note the herokuapp web server uses ephemeral filesystem, that means all files are lost
+when you restart the web.
 
 Result Visualization Locally
 -----------------------------
 You can also run the visualization locally. Download `website source code. <https://github.com/ChengyuanSha/LGPWeb>`_
-After installing all requirements, you can run this website in your local browser
+After installing all requirements (listed in requirements.txt), you can run this website in your local browser
 
 Visualization Demo
 -------------------
