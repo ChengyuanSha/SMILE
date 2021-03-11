@@ -3,8 +3,6 @@
     :alt: Documentation Status
 .. image:: https://api.codacy.com/project/badge/Grade/c8897f8173434a8798896a8f94d0c2c0
     :target: https://www.codacy.com/manual/ChengyuanSha/linear_genetic_programming?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ChengyuanSha/linear_genetic_programming&amp;utm_campaign=Badge_Grade
-.. image:: https://img.shields.io/website?up_message=result%20visualization&url=https%3A%2F%2Flgp-result.herokuapp.com%2F
-    :target: https://lgp-result.herokuapp.com/
 .. image:: https://badge.fury.io/py/lgp.svg
     :target: https://badge.fury.io/py/lgp
 
@@ -73,18 +71,33 @@ Here is an example Bash running script in Compute Canada:
 
     python Run.py
 
-Result Visualization on the Web
--------------------------------
-After Running on clusters, upload result pkl file to `result visualization website (herokuapp hosting). <https://smile-mib.herokuapp.com/>`_
-or `result visualization website (Queen's CS hosting). <https://smile-mib.cs.queensu.ca/>`_.
+Result Visualization
+----------------------
+Preparation of two files
+^^^^^^^^^^^^^^^^^^^^^^^^
+1. ``.pkl`` file is produce (using ``save_model()`` method) when running the algorithm
+
+2. ``.csv`` is the original dataset file. Make sure you named the class column 'category' and put feature names as column names. The dataset is read using the following pandas code.
+
+.. code-block:: python
+
+    df = pd.read_csv('csv file')
+    names = df.columns[1:].values
+    X = df.iloc[:, 1:].values
+    y = df['category'].values
+
+Web
+^^^^^
+Upload result files to `result visualization website (herokuapp hosting). <https://smile-mib.herokuapp.com/>`_
+or `result visualization website (Queen's CS hosting). <https://smile-mib.cs.queensu.ca/>`_
 This will help you visualize the result.
 Note the herokuapp web server uses ephemeral filesystem, that means all files are lost
 when you restart the web.
 
-Result Visualization Locally
------------------------------
+Local
+^^^^^^^
 You can also run the visualization locally. Download `website source code. <https://github.com/ChengyuanSha/LGPWeb>`_
-After installing all requirements (listed in requirements.txt), you can run this website in your local browser
+After installing all requirements (listed in requirements.txt), you can run this website in your local browser.
 
 Visualization Demo
 -------------------
