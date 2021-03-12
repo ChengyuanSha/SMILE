@@ -79,12 +79,8 @@ Preparation of two files
 
 2. ``.csv`` is the original dataset file. Make sure you named the class column 'category' and put feature names as column names. The dataset is read using the following pandas code.
 
-.. code-block:: python
-
-    df = pd.read_csv('csv file')
-    names = df.columns[1:].values
-    X = df.iloc[:, 1:].values
-    y = df['category'].values
+File error checking: Download error checking file `input_file_error_checking.py <https://github.com/ChengyuanSha/LGPWeb/blob/master/input_file_error_checking.py>`_.
+Put your prepared files in the same directory and run ``input_file_error_checking.py``.
 
 Web
 ^^^^^
