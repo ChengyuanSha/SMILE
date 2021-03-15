@@ -9,13 +9,14 @@
    :caption: Contents:
 
 
-Linear Genetic Programming's documentation
-==========================================
+SMILE documentation
+====================
 
 Introduction
 ------------
 
-Linear Genetic Programming (LGP) is a paradigm of genetic programming that employs a representation of
+SMILE package implements Linear Genetic Programming (LGP) algorithm in python, with a scikit-learn style API.
+LGP is a paradigm of genetic programming that employs a representation of
 linearly sequenced instructions. A population of diverse candidate models is initialized randomly and
 will improve prediction accuracy gradually using random sampled training set through a number of generations.
 After evolution, the best model with highest fitness score (i.e. accuracy on random sampled training set) will

@@ -3,7 +3,6 @@ import numpy as np
 class GeneticOperations:
     '''
     GeneticOperations implements crossover and two types of mutation
-
     '''
 
     @staticmethod

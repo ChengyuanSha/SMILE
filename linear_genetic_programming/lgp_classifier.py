@@ -335,10 +335,10 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
         lgp: LGPClassifier generator
             generator
         '''
-        with open(fname, mode) as input:
+        with open(fname, mode) as input_f:
             while True:
                 try:
-                    yield pickle.load(input, encoding='bytes')
+                    yield pickle.load(input_f, encoding='bytes')
                 except EOFError:
                     break
 
@@ -368,7 +368,7 @@ class LGPClassifier(BaseEstimator, ClassifierMixin):
     def __remove_semantic_intron(self, X, y, Prog):
         remove_index = []
         p = copy.deepcopy(Prog)
-        for delete_index, item in enumerate(p.seq):  # try to delete one instruction a time
+        for delete_index, _ in enumerate(p.seq):  # try to delete one instruction a time
             y_pred1 = np.zeros(X.shape[0], dtype=self.classes_[0].dtype)
             for i, row in enumerate(X):
                 y_pred1[i] = p.predictProbaSigmoid(self.numberOfVariable, self.register_, row,
