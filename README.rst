@@ -56,6 +56,8 @@ Create **Run.py** in the same directory as lgp folder, Sample running python fil
     auc_scores = metrics.auc(fpr, tpr)
     # store F1, AUC in validationScores
     lgp.validationScores = {'f1':f1_scores, 'auc':auc_scores}
+    # the result can be saved by calling save_model(). It will produce a pickle file.
+    # save_model() use pickle for object serialization
     lgp.save_model()
 
 Then use **bash file** to set running parameters and submit jobs. This might be different in different supercomputers.
