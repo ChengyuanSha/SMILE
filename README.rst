@@ -28,7 +28,7 @@ Running the algorithm
 This algorithm is **computationally expensive**, and it needs to run approximately 1000 times in parallel to produce enough
 data to analyze. it needs to run in computer clusters like `compute canada. <https://www.computecanada.ca/>`_
 
-Create **Run.py** in the same directory as lgp folder, Sample running python file (Run.py):
+Create a running python file (Run.py) in the same directory as lgp folder, Sample Run.py and classifier usages are shown below:
 
 .. code-block:: python
 
