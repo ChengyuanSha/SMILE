@@ -1,5 +1,5 @@
-.. image:: https://readthedocs.org/projects/linear-genetic-programming/badge/?version=latest
-    :target: https://linear-genetic-programming.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/smile-mib/badge/?version=latest
+    :target: https://smile-mib.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 .. image:: https://api.codacy.com/project/badge/Grade/c8897f8173434a8798896a8f94d0c2c0
     :target: https://www.codacy.com/manual/ChengyuanSha/linear_genetic_programming?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ChengyuanSha/linear_genetic_programming&amp;utm_campaign=Badge_Grade
