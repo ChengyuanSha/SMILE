@@ -23,6 +23,10 @@ This package is published on pypi. Install using pip.
 
     pip install lgp
 
+Sample Data
+-----------
+Sample metabolomic data on AD can be found in *dataset* folder or directly downloaded from the `website. <https://smile-mib.cs.queensu.ca/>`_
+
 Running the algorithm
 ---------------------
 This algorithm is **computationally expensive**, and it needs to run approximately 1000 times in parallel to produce enough
