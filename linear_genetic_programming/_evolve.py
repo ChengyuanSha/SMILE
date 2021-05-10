@@ -59,7 +59,7 @@ class Evolve:
         print('-' * 3 + ' ' + '-' * 9 + ' ' + '-' * 6 + ' ' + '-' * 7 + ' ' + '-' * 12 + ' ' + '-' * 10 + ' ' + '-' * 13)
 
     def displayStatistics(self, g, bestIndividual, isRandomSampling, randomSz):
-        ranSamplingStatus = randomSz if isRandomSampling else "False"
+        ranSamplingStatus = randomSz if isRandomSampling else -1
         line_format = '{0:>3d}|{1:>9.2f}|{2:>6d}|{3:>7.2f}|{4:>12d}|{5:>10.2f}|{6:>13.2f}'
         print(line_format.format(g, bestIndividual.fitness, bestIndividual.classificationError,
               self.p.getAverageFitness(), ranSamplingStatus, self.p.getAvgProgLen(), self.p.getAvgEffProgLen() ))
