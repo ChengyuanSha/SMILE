@@ -2,8 +2,7 @@ import numpy as np
 
 
 class Instruction:
-
-    '''
+    """
     Instruction is the lowest level in classification model. It contains a return register,
     an operation and two calculation registers. For example, "r[0] = r[2] + 0.5", r[0] is
     a return register, r[2] and 0.5 are calculation registers. '+' is operation.
@@ -27,7 +26,7 @@ class Instruction:
     reg1Index
     reg2Index
 
-    '''
+    """
 
     # np.random.seed(0)
     OP_ADD = 0
@@ -46,6 +45,7 @@ class Instruction:
                 self.makeRandomInstr(numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, pConst)
 
     def makeRandomInstr(self, numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, pConst):
+        """ make a random instruction """
         if np.random.random() >= pConst:  # reg1 will be a variable or input
             r1 = np.random.randint(numberOfVariable + numberOfInput)
             reg1Index = r1
@@ -71,6 +71,7 @@ class Instruction:
             return operIndex, returnRegIndex, reg1Index, reg2Index
 
     def toString(self, numberOfVariable, numberOfInput, register):
+        """ Convert a program to a readable format """
         s = "<"
 
         if self.isBranch:

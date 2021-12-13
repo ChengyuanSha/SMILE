@@ -4,8 +4,9 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.utils.multiclass import unique_labels
 
+
 class Program:
-    '''
+    """
     A Program is a collection of instructions. An effective program means all Instruction
     play a role in the return value. The return value goes through a sigmoid function to
     predict class
@@ -24,7 +25,8 @@ class Program:
     effProgLen: int
         set after evaluate function, store effective program length
 
-    '''
+    """
+
     OP_ADD = 0
     OP_SUBTRACT = 1
     OP_MULTIPLY = 2
@@ -35,12 +37,14 @@ class Program:
         self.seq = []
 
     def makeRandomeProg(self, numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, length, pConst):
+        """ make a random program """
         self.seq = [Instruction(numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, pConst, 0.5) for _
                     in range(length - 1)]
         # make sure last instruction is not a branch
         self.seq.append(Instruction(numberOfOperation, numberOfVariable, numberOfInput, numberOfConstant, pConst, 0))
 
     def toString(self, numberOfVariable, numberOfInput, register):
+        """ convert a program to a readable format """
         s = ""
         count = 0
         if self.seq == []:
@@ -50,10 +54,13 @@ class Program:
             count += 1
         return s
 
-    # input is 1 dimension 1 row data
     def execute(self, numberOfVariable, register, X_train):
+        """
+        Execute a program
+        Note: input is 1 dimension 1 row data
+        """
         data_type = X_train[0].dtype
-        check_float_range = lambda x: np.clip(x , -np.sqrt(np.finfo(data_type).max), np.sqrt(np.finfo(data_type).max))
+        check_float_range = lambda x: np.clip(x, -np.sqrt(np.finfo(data_type).max), np.sqrt(np.finfo(data_type).max))
         registerCopy = copy.deepcopy(register)
         for i in range(len(X_train)):
             registerCopy[i + numberOfVariable] = X_train[i]
@@ -73,32 +80,37 @@ class Program:
             else:  # not a branch Instruction
                 if self.seq[i].operIndex == self.OP_ADD:
                     registerCopy[self.seq[i].returnRegIndex] = check_float_range(registerCopy[self.seq[i].reg1Index]) \
-                        + check_float_range(registerCopy[self.seq[i].reg2Index])
+                                                               + check_float_range(registerCopy[self.seq[i].reg2Index])
                 elif self.seq[i].operIndex == self.OP_SUBTRACT:
                     registerCopy[self.seq[i].returnRegIndex] = check_float_range(registerCopy[self.seq[i].reg1Index]) \
-                        - check_float_range(registerCopy[self.seq[i].reg2Index])
+                                                               - check_float_range(registerCopy[self.seq[i].reg2Index])
                 elif self.seq[i].operIndex == self.OP_MULTIPLY:
                     registerCopy[self.seq[i].returnRegIndex] = check_float_range(registerCopy[self.seq[i].reg1Index]) \
-                        * check_float_range(registerCopy[self.seq[i].reg2Index])
+                                                               * check_float_range(registerCopy[self.seq[i].reg2Index])
                 elif self.seq[i].operIndex == self.OP_DIVIDE:  # protected operation
                     if registerCopy[self.seq[i].reg2Index] != 0:
-                        registerCopy[self.seq[i].returnRegIndex] = check_float_range(registerCopy[self.seq[i].reg1Index]) \
-                            / check_float_range(registerCopy[self.seq[i].reg2Index])
+                        registerCopy[self.seq[i].returnRegIndex] = check_float_range(
+                            registerCopy[self.seq[i].reg1Index]) \
+                                                                   / check_float_range(
+                            registerCopy[self.seq[i].reg2Index])
                     else:
                         registerCopy[self.seq[i].returnRegIndex] = registerCopy[self.seq[i].reg1Index]
                 elif self.seq[i].operIndex == self.OP_EXPON:  # protected operation
-                    if np.abs(registerCopy[self.seq[i].reg2Index]) <= 10 and np.abs(registerCopy[self.seq[i].reg1Index]) != 0:
+                    if np.abs(registerCopy[self.seq[i].reg2Index]) <= 10 and np.abs(
+                            registerCopy[self.seq[i].reg1Index]) != 0:
                         registerCopy[self.seq[i].returnRegIndex] = np.float_power(
                             np.abs(registerCopy[self.seq[i].reg1Index]), registerCopy[self.seq[i].reg2Index])
                     else:
-                        registerCopy[self.seq[i].returnRegIndex] = check_float_range(registerCopy[self.seq[i].reg1Index]) \
-                            + check_float_range(registerCopy[self.seq[i].reg2Index])
+                        registerCopy[self.seq[i].returnRegIndex] = check_float_range(
+                            registerCopy[self.seq[i].reg1Index]) \
+                                                                   + check_float_range(
+                            registerCopy[self.seq[i].reg2Index])
                 i += 1
         return registerCopy[0]
 
     @staticmethod
     def sigmoid(x):
-        # Numerically stable sigmoid function.
+        """ Numerically stable sigmoid function. """
         if x >= 0:
             z = np.exp(-x)
             return 1 / (1 + z)
@@ -107,15 +119,17 @@ class Program:
             return z / (1 + z)
 
     def evaluate(self, numberOfVariable, register, X, y):
-        y_class = unique_labels(y)
-        y_pred = np.zeros(len(y), dtype=y_class[0].dtype)
+        """ Evaluate a program """
+        y = y.astype('int64')
+        y_class = np.unique(y).astype('int64')
+        y_pred = np.zeros(len(y), dtype=y_class.dtype)
         for i, row in enumerate(X):
             y_pred[i] = self.predictProbaSigmoid(numberOfVariable, register, row, y_class)
         self.fitness = accuracy_score(y, y_pred)
         self.classificationError = np.argwhere(y != y_pred).size
 
     def predictProbaSigmoid(self, numberOfVariable, register, singleX, classes, returnType='class'):
-        '''
+        """
         Parameters
         ----------
         numberOfVariable
@@ -133,8 +147,8 @@ class Program:
             return class 0 or class 1 based on the sigmoid function if returntype == 'class'
         P: float
             return probability if returntype == 'prob'
+        """
 
-        '''
         self.progLen = len(self.seq)
         exonProgram = copy.deepcopy(self)
         exonProgram = exonProgram.eliminateStrcIntron()
@@ -150,6 +164,7 @@ class Program:
             return pred
 
     def eliminateStrcIntron(self):
+        """ Eliminate structral introns (useless instructions) """
         strucIntronFreeProg = Program()
         effInstr = []
         effReg = []

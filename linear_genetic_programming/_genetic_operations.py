@@ -1,14 +1,16 @@
 import numpy as np
 
+
 class GeneticOperations:
-    '''
+    """
     GeneticOperations implements crossover and two types of mutation
-    '''
+    """
 
     @staticmethod
     def simpleCrossover(pro1, pro2):
+        """ Two point crossover """
         fracStart1 = np.random.randint(len(pro1.seq))
-        fracEnd1 = fracStart1 + np.random.randint(len(pro1.seq ) -fracStart1)
+        fracEnd1 = fracStart1 + np.random.randint(len(pro1.seq) - fracStart1)
         fracStart2 = np.random.randint(len(pro2.seq))
         fracEnd2 = fracStart2 + np.random.randint(len(pro2.seq) - fracStart2)
 
@@ -29,6 +31,7 @@ class GeneticOperations:
 
     @staticmethod
     def macroMutation(prog, pInsert, maxProgLength, minProgLength, randomInstr):
+        """ MacroMutation mutate a whole Instruction """
         choose = np.random.random_sample()
         if (len(prog.seq) < maxProgLength) and ((choose < pInsert) or len(prog.seq) == minProgLength):
             insertPos = np.random.randint(len(prog.seq))
@@ -40,12 +43,13 @@ class GeneticOperations:
     @staticmethod
     def microMutation(prog, pRegMut, pConst, numberOfVariable,
                       numberOfInput, numberOfOperation, numberOfConstant):
+        """ MicroMutation mutate registers inside a Instruction """
         mutPos = np.random.randint(len(prog.seq))
         mutInstr = prog.seq[mutPos]
 
-        if prog.seq[mutPos].isBranch:   # mutation of branch
+        if prog.seq[mutPos].isBranch:  # mutation of branch
             # print("branch mutation")
-            regIndex = np.random.randint(1 ,3) # 1 or 2
+            regIndex = np.random.randint(1, 3)  # 1 or 2
             if regIndex == 1:
                 GeneticOperations.__mutateRegister1(mutInstr, numberOfVariable, numberOfInput, numberOfConstant, pConst)
             elif regIndex == 2:
@@ -53,7 +57,7 @@ class GeneticOperations:
         # calculation mutation
         else:
             if np.random.random_sample() < pRegMut:  # register mutation
-                regIndex = np.random.randint(3) # 3 register mutation situations
+                regIndex = np.random.randint(3)  # 3 register mutation situations
 
                 if regIndex == 0:  # mutate return register
                     # print("mutate return register")
@@ -61,11 +65,13 @@ class GeneticOperations:
                     while mutInstr.returnRegIndex == rt:
                         rt = np.random.randint(numberOfVariable)
                     mutInstr.returnRegIndex = rt
-                elif regIndex == 1: # mutate register1
+                elif regIndex == 1:  # mutate register1
                     # print("mutate register1")
-                    GeneticOperations.__mutateRegister1(mutInstr, numberOfVariable, numberOfInput, numberOfConstant, pConst)
+                    GeneticOperations.__mutateRegister1(mutInstr, numberOfVariable, numberOfInput, numberOfConstant,
+                                                        pConst)
                 elif regIndex == 2:  # mutate register 2
-                    GeneticOperations.__mutateRegister2(mutInstr, numberOfVariable, numberOfInput, numberOfConstant, pConst)
+                    GeneticOperations.__mutateRegister2(mutInstr, numberOfVariable, numberOfInput, numberOfConstant,
+                                                        pConst)
             else:  # operator mutation
                 # print("operator mutation")
                 index = mutInstr.operIndex
@@ -75,6 +81,7 @@ class GeneticOperations:
 
     @staticmethod
     def __mutateRegister1(mutInstr, numberOfVariable, numberOfInput, numberOfConstant, pConst):
+        """ Helper for MicroMutation """
         # print("mutate register1")
         index = mutInstr.reg1Index
         if mutInstr.reg2Index < numberOfVariable + numberOfInput:  # reg2 is a variable or input
@@ -94,6 +101,7 @@ class GeneticOperations:
 
     @staticmethod
     def __mutateRegister2(mutInstr, numberOfVariable, numberOfInput, numberOfConstant, pConst):
+        """ Helper for MicroMutation """
         # print("mutate register 2")
         index = mutInstr.reg2Index
         if mutInstr.reg1Index < numberOfVariable + numberOfInput:  # reg1 is a variable or input
